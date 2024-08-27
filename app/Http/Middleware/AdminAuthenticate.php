@@ -48,6 +48,6 @@ class AdminAuthenticate extends Middleware
 
         // If the admin is not authenticated, call the 'unauthenticated' method,
         // which will handle the response when the user is not logged in.
-        $this->unauthenticated($request, 'admin');
+        $this->unauthenticated($request, ['admin']);
     }
 }

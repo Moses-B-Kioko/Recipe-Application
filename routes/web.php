@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\admin\AdminLoginController;
 use App\Http\Controllers\admin\HomeController;
 
+use App\Http\Controllers\admin\CategoryContoller; 
+use Illuminate\Http\Request;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -56,5 +59,24 @@ Route::group(['prefix' => 'admin'], function () {
         // Define a route for logging out the admin. When accessed, it calls the 'logout' method of the 'HomeController'.
         // The route is named 'admin.logout' for easy reference in the application.
         Route::get('/logout', [HomeController::class, 'logout'])->name('admin.logout');
+
+        //Category Routes
+        Route::get('/categories', [CategoryContoller::class, 'index'])->name('categories.index');
+
+        Route::get('/categories/create', [CategoryContoller::class, 'create'])->name('categories.create');
+        Route::post('/categories', [CategoryContoller::class, 'store'])->name('categories.store');
+
+
+      // */ */ Route::get('/getSlug',function(Request $request){
+            //$slug = '';
+            //if(!empty($request->title)) {
+             //   $slug = Str::slug($request->title);
+            //}
+            //return repsonse()->json([
+                //'status' => true,
+            //    'slug' => $slug
+          //  ]);
+        //})->name('getSlug'); 
+
     });
 });
