@@ -6,7 +6,7 @@
 	<div class="container-fluid my-2">
 		<div class="row mb-2">
 			<div class="col-sm-6">
-				<h1>Create Category</h1>
+				<h1>Edit Category</h1>
 			</div>
 			<div class="col-sm-6 text-right">
 				<a href="{{ route('categories.index')}}" class="btn btn-primary">Back</a>
@@ -26,34 +26,42 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="name">Name</label>
-                                <input type="text" name="name" id="name" class="form-control" placeholder="Name" autocomplete="name"> <!-- Added autocomplete -->
+                                <input type="text" name="name" id="name" class="form-control"
+                                 placeholder="Name" value="{{$category->name}}" autocomplete="name"> <!-- Added autocomplete -->
                                 <p></p>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="slug">Slug</label>
-                                <input type="text" name="slug" id="slug" class="form-control" placeholder="Slug" autocomplete="off"> <!-- Disable autocomplete for slug -->
+                                <input type="text" name="slug" id="slug" class="form-control" 
+                                placeholder="Slug" value="{{$category->slug}}" autocomplete="off"> <!-- Disable autocomplete for slug -->
                                 <p></p>
                             </div>
                         </div>	
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="image_id">Image</label>
-                                <input type="hidden" id="image_id" name="image_id" value="">
-                                <div id="image" class="dropzone dz-clickable"> <!-- Change the ID here -->
+                                <input type="hidden" id="image_id" name="image_id" value="" autocomplete="off"> <!-- Disable autocomplete for hidden field -->
+                                <div id="image" class="dropzone dz-clickable">
                                     <div class="dz-message needsclick">
                                         <br>Drop files here or click to upload.<br><br>
                                     </div>
                                 </div>
                             </div>
                         </div>	
+                        @if(!empty($category->image))
+                        <div>
+                            <img width="250" src="{{ asset('uploads/category/thumb/'.
+                            $category->image)}}" alt="">
+                        </div>
+                        @endif
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="status">Status</label>
                                 <select name="status" id="status" class="form-control" autocomplete="off"> <!-- Disable autocomplete for dropdown -->
-                                    <option value="1">Active</option>
-                                    <option value="0">Block</option>
+                                    <option {{ ($category-> status == 1) ? 'selected' : ''}} value="1">Active</option>
+                                    <option {{ ($category-> status == 0) ? 'selected' : ''}} value="0">Block</option>
                                 </select>
                             </div>
                         </div>								
@@ -61,7 +69,7 @@
                 </div>							
             </div>
             <div class="pb-5 pt-3">
-                <button type="submit" class="btn btn-primary">Create</button>
+                <button type="submit" class="btn btn-primary">Update</button>
                 <a href="{{ route('categories.index')}}" class="btn btn-outline-dark ml-3">Cancel</a>
             </div>
         </form>
@@ -78,8 +86,8 @@
     var element = $(this);
     $("button[type=submit]").prop('disabled', true);
     $.ajax({
-        url: '{{ route("categories.store")}}',
-        type: 'post',
+        url: '{{ route("categories.update", $category->id)}}',
+        type: 'put',
         data: element.serializeArray(),
         dataType: 'json',
         success: function(response){

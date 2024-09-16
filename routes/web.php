@@ -7,7 +7,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\admin\AdminLoginController;
 use App\Http\Controllers\admin\HomeController;
 
-use App\Http\Controllers\admin\CategoryContoller; 
+use App\Http\Controllers\admin\CategoryController; 
+use App\Http\Controllers\admin\TempImagesController; 
+
 use Illuminate\Http\Request;
 
 /*
@@ -61,10 +63,15 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/logout', [HomeController::class, 'logout'])->name('admin.logout');
 
         //Category Routes
-        Route::get('/categories', [CategoryContoller::class, 'index'])->name('categories.index');
+        Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+        Route::get('/categories/create', [CategoryController::class, 'create'])->name('categories.create');
+        Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+        Route::get('/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+        Route::put('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
 
-        Route::get('/categories/create', [CategoryContoller::class, 'create'])->name('categories.create');
-        Route::post('/categories', [CategoryContoller::class, 'store'])->name('categories.store');
+        //temp-images.create
+        Route::post('/upload-temp-image', [TempImagesController::class, 'create'])->name('temp-images.create');
+
 
 
       // */ */ Route::get('/getSlug',function(Request $request){
