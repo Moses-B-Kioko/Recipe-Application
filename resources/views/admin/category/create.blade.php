@@ -6,7 +6,7 @@
 	<div class="container-fluid my-2">
 		<div class="row mb-2">
 			<div class="col-sm-6">
-				<h1>Create Category</h1>
+				<h1>Create Genre</h1>
 			</div>
 			<div class="col-sm-6 text-right">
 				<a href="{{ route('categories.index')}}" class="btn btn-primary">Back</a>
@@ -20,6 +20,8 @@
 	<!-- Default box -->
 	<div class="container-fluid">
             <form action="" method="post" id="categoryForm" name="categoryForm" autocomplete="off"> <!-- Disable autofill for the entire form if needed -->
+            @csrf
+            @method('POST')
             <div class="card">
                 <div class="card-body">								
                     <div class="row">
@@ -33,14 +35,14 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="slug">Slug</label>
-                                <input type="text" name="slug" id="slug" class="form-control" placeholder="Slug" autocomplete="off"> <!-- Disable autocomplete for slug -->
+                                <input type="text" readonly name="slug" id="slug" class="form-control" placeholder="Slug" autocomplete="off"> <!-- Disable autocomplete for slug -->
                                 <p></p>
                             </div>
                         </div>	
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="image_id">Image</label>
-                                <input type="hidden" id="image_id" name="image_id" value="">
+                            <input type="hidden" id="image_id" name="image_id" value="">
+                                <label for="image">Image</label>
                                 <div id="image" class="dropzone dz-clickable"> <!-- Change the ID here -->
                                     <div class="dz-message needsclick">
                                         <br>Drop files here or click to upload.<br><br>
@@ -73,6 +75,25 @@
 
 @section('customJs')
 <script>
+
+    $("#name").change(function(){
+        element = $(this);
+        $("button[type=submit]").prop('disabled',true);
+        $.ajax({
+            url: '{{ route("getSlug") }}',
+            type: 'get',
+            data: {title: element.val()},
+            dataType: 'json',
+            success: function(response){
+                $("button[type=submit]").prop('disabled', false);
+                if(response["status"] == true) {
+                    $("#slug").val(response["slug"]);
+                }
+            }
+        });
+    });
+
+
   $("#categoryForm").submit(function(event){
     event.preventDefault();
     var element = $(this);
@@ -84,8 +105,8 @@
         dataType: 'json',
         success: function(response){
             $("button[type=submit]").prop('disabled', false);
-            window.location.href="{{ route('categories.index')}}"
             if(response["status"] == true){
+                window.location.href="{{ route('categories.index')}}";
                 $("#name").removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html("");
                 $("#slug").removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html("");
             } else {

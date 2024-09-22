@@ -6,7 +6,7 @@
 	<div class="container-fluid my-2">
 		<div class="row mb-2">
 			<div class="col-sm-6">
-				<h1>Edit Category</h1>
+				<h1>Edit Genre</h1>
 			</div>
 			<div class="col-sm-6 text-right">
 				<a href="{{ route('categories.index')}}" class="btn btn-primary">Back</a>
@@ -20,6 +20,8 @@
 	<!-- Default box -->
 	<div class="container-fluid">
             <form action="" method="post" id="categoryForm" name="categoryForm" autocomplete="off"> <!-- Disable autofill for the entire form if needed -->
+            @csrf
+            @method('PUT')
             <div class="card">
                 <div class="card-body">								
                     <div class="row">
@@ -92,11 +94,18 @@
         dataType: 'json',
         success: function(response){
             $("button[type=submit]").prop('disabled', false);
-            window.location.href="{{ route('categories.index')}}"
             if(response["status"] == true){
+                
+                window.location.href="{{ route('categories.index')}}";
+
                 $("#name").removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html("");
                 $("#slug").removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html("");
             } else {
+
+                if(response['errors'] == true) {
+                    window.location.href="{{ route('categories.index')}}";
+                }
+
                 var errors = response['errors'];
                 if(errors['name']) {
                     $("#name").addClass('is-invalid').siblings('p').addClass('invalid-feedback').html(errors['name']);

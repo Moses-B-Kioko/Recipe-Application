@@ -9,6 +9,8 @@ use App\Http\Controllers\admin\HomeController;
 
 use App\Http\Controllers\admin\CategoryController; 
 use App\Http\Controllers\admin\TempImagesController; 
+use App\Http\Controllers\admin\SubGenreController; 
+use App\Http\Controllers\FrontController; 
 
 use Illuminate\Http\Request;
 
@@ -25,9 +27,10 @@ use Illuminate\Http\Request;
 */
 
 // Define a route for the root URL ('/'). When accessed, it returns the 'welcome' view.
-Route::get('/', function () {
-    return view('welcome');
-});
+//Route::get('/', function () {
+ //   return view('welcome');
+//});
+Route::get('/',[FrontController::class,'index'])->name('front.home');
 
 // Define a route for the admin login page. When accessed, it calls the 'index' method of the 'AdminLoginController'.
 // The route is named 'admin.login' for easy reference in the application.
@@ -68,22 +71,32 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
         Route::get('/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
         Route::put('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
+        Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.delete');
+
+        //Sub Genre Routes
+        Route::get('/sub-genre', [SubGenreController::class, 'index'])->name('sub-genre.index');
+        Route::get('/sub-genre/create', [SubGenreController::class, 'create'])->name('sub-genre.create');
+        Route::post('/sub-genre', [SubGenreController::class, 'store'])->name('sub-genre.store');
+        Route::get('/sub-genre/{subgenre}/edit', [SubGenreController::class, 'edit'])->name('sub-genre.edit');
+        Route::put('/sub-genre/{subgenre}', [SubGenreController::class, 'update'])->name('sub-genre.update');
+        Route::delete('/sub-genre/{subgenre}', [SubGenreController::class, 'destroy'])->name('sub-genre.delete');
+
 
         //temp-images.create
         Route::post('/upload-temp-image', [TempImagesController::class, 'create'])->name('temp-images.create');
 
 
 
-      // */ */ Route::get('/getSlug',function(Request $request){
-            //$slug = '';
-            //if(!empty($request->title)) {
-             //   $slug = Str::slug($request->title);
-            //}
-            //return repsonse()->json([
-                //'status' => true,
-            //    'slug' => $slug
-          //  ]);
-        //})->name('getSlug'); 
+       Route::get('/getSlug',function(Request $request){
+            $slug = '';
+            if(!empty($request->title)) {
+                $slug = Str::slug($request->title);
+            }
+            return response()->json([
+              'status' => true,
+              'slug' => $slug
+            ]);
+        })->name('getSlug'); 
 
     });
 });
