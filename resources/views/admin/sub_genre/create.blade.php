@@ -9,7 +9,7 @@
 								<h1>Create Sub Genre</h1>
 							</div>
 							<div class="col-sm-6 text-right">
-								<a href="{{ route('sub-genre.index')}}" class="btn btn-primary">Back</a>
+								<a href="{{ route('sub-genre.index')}}" class="btn btn-primary">New Sub Genre</a>
 							</div>
 						</div>
 					</div>
@@ -43,13 +43,6 @@
                                                 <input type="text" name="name" id="name" class="form-control" placeholder="Name">	
                                                 <p></p>
                                             </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="slug">Slug</label>
-                                                <input type="text" readonly name="slug" id="slug" class="form-control" placeholder="Slug">	
-                                                <p></p>
-                                            </div>
                                         </div>		
                                         <div class="col-md-6">
                                             <div class="mb-3">
@@ -60,7 +53,16 @@
                                                 </select>
                                                 <p></p>
                                             </div>
-                                        </div>									
+                                        </div>	
+                                        <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="status">Show on Home</label>
+                                            <select name="showHome" id="showHome" class="form-control" autocomplete="off"> <!-- Disable autocomplete for dropdown -->
+                                                <option value="Yes">Yes</option>
+                                                <option value="No">No</option>
+                                            </select> 
+                                        </div>
+                                    </div>										
                                     </div>
                                 </div>							
                             </div>

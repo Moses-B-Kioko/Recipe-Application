@@ -146,12 +146,7 @@
 					
       			</ul>      			
       		</div>   
-              <div class="right-nav py-0 d-flex align-items-center">
-                <a href="cart.php" class="ml-3 d-flex pt-2">
-                    <i class="fas fa-shopping-cart text-primary"></i>
-                </a>
-                <a href="{{ route('account.register')}}" class="btn btn-warning" style="background-color: yellow; color: black; margin-left: 30px;">Sell</a>
-            </div>
+              
       	</nav>
   	</div>
 </header>

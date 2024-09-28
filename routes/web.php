@@ -11,7 +11,7 @@ use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\TempImagesController; 
 use App\Http\Controllers\admin\SubGenreController; 
 use App\Http\Controllers\FrontController; 
-
+use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 
 /*
@@ -31,7 +31,26 @@ use Illuminate\Http\Request;
  //   return view('welcome');
 //});
 Route::get('/',[FrontController::class,'index'])->name('front.home');
+ 
 
+//Route::get('/login',[AuthController::class,'login'])->name('account.login');
+
+Route::group(['prefix' => 'account'], function () {
+    Route::group(['middleware' => 'guest'], function() {
+        Route::get('/login', [AuthController::class, 'login'])->name('account.login');
+        Route::post('/login', [AuthController::class, 'authenticate'])->name('account.authenticate');
+        Route::get('/register',[AuthController::class,'register'])->name('account.register');
+        Route::post('/process-register',[AuthController::class,'processRegister'])->name('account.processRegister');
+
+    });
+
+    Route::group(['middleware' => 'auth'], function() {
+        Route::get('/profile', [AuthController::class, 'profile'])->name('account.profile');
+        Route::get('/product', [AuthController::class, 'product'])->name('account.product');
+        Route::get('/logout',[AuthController::class,'logout'])->name('account.logout');
+
+    });
+});
 // Define a route for the admin login page. When accessed, it calls the 'index' method of the 'AdminLoginController'.
 // The route is named 'admin.login' for easy reference in the application.
 Route::get('/admin/login', [AdminLoginController::class, 'index'])->name('admin.login');

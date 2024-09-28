@@ -47,6 +47,7 @@ class SubGenreController extends Controller
             $subGenre->name = $request->name;
             $subGenre->slug = $request->slug;
             $subGenre->status = $request->status;
+            $subGenre->showHome = $request->showHome;
             $subGenre->category_id = $request->genre;
             $subGenre->save();
 
@@ -105,6 +106,7 @@ class SubGenreController extends Controller
             $subGenre->name = $request->name;
             $subGenre->slug = $request->slug;
             $subGenre->status = $request->status;
+            $subGenre->showHome = $request->showHome;
             $subGenre->category_id = $request->genre;
             $subGenre->save();
 
