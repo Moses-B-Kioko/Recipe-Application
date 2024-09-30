@@ -33,13 +33,12 @@ class CategoryController extends Controller
 {
     $validator = Validator::make($request->all(), [
         'name' => 'required',
-        'slug' => 'required|unique:categories',
+        
     ]);
 
     if ($validator->passes()) {
         $category = new Category();
         $category->name = $request->name;
-        $category->slug = $request->slug;
         $category->status = $request->status;
         $category->showHome = $request->showHome;
         $category->save();
@@ -58,11 +57,11 @@ class CategoryController extends Controller
             File::copy($sPath, $dPath);
 
             // Generate Image Thumbnail
-            $thumbPath = public_path('uploads/category/thumb/'. $newImageName);
-            $img = Image::make($dPath)->fit(450, 600, function ($constraint) {
-                $constraint->upsize();
-            });
-            $img->save($thumbPath);
+           // $thumbPath = public_path('uploads/category/thumb/'. $newImageName);
+            //$img = Image::make($dPath)->fit(450, 600, function ($constraint) {
+             //   $constraint->upsize();
+            //});
+            //$img->save($thumbPath);
 
             $category->image = $newImageName;
             $category->save();
@@ -109,13 +108,11 @@ class CategoryController extends Controller
 
         $validator = Validator::make($request->all(),[
             'name' => 'required',
-            'slug' => 'required|unique:categories,slug,'.$category->id.',id',
         ]);
 
         if($validator->passes()) {
 
             $category->name = $request->name;
-            $category->slug = $request->slug;
             $category->status = $request->status;
             $category->showHome = $request->showHome;
             $category->save();

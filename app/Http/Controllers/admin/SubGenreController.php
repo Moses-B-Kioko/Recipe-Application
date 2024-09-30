@@ -36,7 +36,6 @@ class SubGenreController extends Controller
     public function store(Request $request) {
         $validator = Validator::make($request->all(),[
             'name' => 'required',
-            'slug' => 'required|unique:sub_genres', // Ensure table name is correct
             'genre' => 'required',
             'status' => 'required'
         ]);
@@ -45,7 +44,6 @@ class SubGenreController extends Controller
 
             $subGenre = new SubGenre();
             $subGenre->name = $request->name;
-            $subGenre->slug = $request->slug;
             $subGenre->status = $request->status;
             $subGenre->showHome = $request->showHome;
             $subGenre->category_id = $request->genre;
@@ -96,7 +94,6 @@ class SubGenreController extends Controller
         $validator = Validator::make($request->all(),[
             'name' => 'required',
             //'slug' => 'required|unique:sub_genres', // Ensure table name is correct
-            'slug' => 'required|unique:sub_genres,slug,'.$subGenre->id.',id',
             'genre' => 'required',
             'status' => 'required'
         ]);
@@ -104,7 +101,6 @@ class SubGenreController extends Controller
         if($validator->passes()) {
 
             $subGenre->name = $request->name;
-            $subGenre->slug = $request->slug;
             $subGenre->status = $request->status;
             $subGenre->showHome = $request->showHome;
             $subGenre->category_id = $request->genre;

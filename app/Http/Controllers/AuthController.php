@@ -24,7 +24,6 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|min:3',
             'email' => 'required|email|unique:users',
-            'phone' => 'required|digits:10',
             'password' => 'required|min:5|confirmed'
         ]);
 
@@ -61,8 +60,8 @@ class AuthController extends Controller
 
             if (Auth::attempt(['email'=> $request->email, 'password' => $request->password],$request->get('remember'))) {
 
-                return redirect()->route('account.profile');
-
+                return redirect()->route('account.profile')
+                ->with('success', 'You successfully logged in!');        
             } else {
                 //session()->flash('error', 'Either email or password is incorrect.');
                 return redirect()->route('account.login')
@@ -83,6 +82,26 @@ class AuthController extends Controller
         $genres = Category::orderBy('name', 'ASC')->get();
         $data['categories'] = $genres; // Correct assignment
         return view('front.account.profile', $data);
+    }
+
+    public function index(Request $request) {
+        
+        if( !empty($request->category_id)) {
+            // Fetch the sub-genres based on the category_id
+            $subCategories = SubGenre::where('category_id', $request->category_id)
+                ->orderBy('name', 'ASC')
+                ->get();
+    
+            return response()->json([
+                'status' => true,
+                'subCategories' => $subCategories
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'subCategories' => []
+            ]);
+        }
     }
     
 

@@ -80,7 +80,7 @@
                                                         </select>
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label for="sub_category">Sub Sub Genre</label>
+                                                        <label for="sub_category">Sub Genre</label>
                                                         <select name="sub_category" id="sub_category" class="form-control">
                                                         <option value="Electronics">Select a Sub Genre</option>
                                                         </select>
@@ -136,7 +136,7 @@
                                         <div class="card-body">
                                             <h2 class="h4 mb-3">Inventory</h2>								
                                             <div class="row">
-                                                <div class="col-md-6">
+                                                <!-- <div class="col-md-6">
                                                     <div class="mb-3">
                                                         <label for="sku">SKU (Stock Keeping Unit)</label>
                                                         <input type="text" name="sku" id="sku" class="form-control" placeholder="SKU">	
@@ -147,7 +147,7 @@
                                                         <label for="barcode">Barcode</label>
                                                         <input type="text" name="barcode" id="barcode" class="form-control" placeholder="Barcode">	
                                                     </div>
-                                                </div>   
+                                                </div>    -->
                                                 <div class="col-md-12">
                                                     <div class="mb-3">
                                                         <div class="custom-control custom-checkbox">
@@ -223,8 +223,8 @@
         dataType: 'json',
         success: function(response) {
             $("#sub_category").find("option").not(":first").remove();
-            $.each(response["subCategories"], function(key, item){
-                $("#sub_category").append(`<option value="${item.id}">${item.name}</option>`);
+            $.each(response["subCategories"],function(key,item){
+                $("#sub_category").append(`<option ='${item.id}'>${item.name}</option>`);
             });
         },
         error: function(){
