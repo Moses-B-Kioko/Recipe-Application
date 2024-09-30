@@ -9,4 +9,7 @@ function getGenres(){
     ->where('showHome', 'Yes')
     ->get();
 }
+function getGenre(){
+    return Category::orderBy('name', 'ASC');
+}
 ?>

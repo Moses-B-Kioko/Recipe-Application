@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Category;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -76,9 +77,14 @@ class AuthController extends Controller
         }
     }
 
+
     public function profile() {
-        return view('front.account.profile');
+        $data = [];
+        $genres = Category::orderBy('name', 'ASC')->get();
+        $data['categories'] = $genres; // Correct assignment
+        return view('front.account.profile', $data);
     }
+    
 
     public function logout() {
         Auth::logout();

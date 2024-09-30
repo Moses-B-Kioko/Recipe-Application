@@ -41,6 +41,8 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;500&family=Raleway:ital,wght@0,400;0,600;0,800;1,200&family=Roboto+Condensed:wght@400;700&family=Roboto:wght@300;400;700;900&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="{{ asset('admin-assets/plugins/summernote/summernote.min.css')}}">
+
 
 	<!-- Fav Icon -->
 	<link rel="shortcut icon" type="image/x-icon" href="#" />
@@ -218,6 +220,9 @@
 <script src="{{ asset('front-assets/js/slick.min.js')}}"></script>
 <script src="{{ asset('front-assets/js/custom.js')}}"></script>
 
+<script src="{{ asset('admin-assets/plugins/summernote/summernote.min.js')}}"></script>
+
+
 <script>
 window.onscroll = function() {myFunction()};
 
@@ -231,6 +236,10 @@ function myFunction() {
     navbar.classList.remove("sticky");
   }
 }
+
+$(document).ready(function(){
+	$(".summernote").summernote();
+});
 </script>
 </body>
 </html>
