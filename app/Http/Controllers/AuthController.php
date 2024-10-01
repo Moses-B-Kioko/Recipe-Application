@@ -58,16 +58,23 @@ class AuthController extends Controller
 
         if ($validator->passes()) {
 
-            if (Auth::attempt(['email'=> $request->email, 'password' => $request->password],$request->get('remember'))) {
-
-                return redirect()->route('account.profile')
-                ->with('success', 'You successfully logged in!');        
+            if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))) {
+                $user = Auth::user(); // You don't need to use a guard again if Auth::attempt succeeded
+                
+                if ($user->role == 1) {
+                    // Redirect to profile for authorized user
+                    return redirect()->route('account.profile'); 
+                } else {
+                    // Log out unauthorized users
+                    Auth::logout();
+                    return redirect()->route('account.login')->with('error', 'You are not authorized to access this panel.');
+                }
             } else {
-                //session()->flash('error', 'Either email or password is incorrect.');
                 return redirect()->route('account.login')
                           ->withInput($request->only('email'))
-                          ->with('error','Either email or password is incorrect.');
+                          ->with('error', 'Either email or password is incorrect.');
             }
+            
 
         } else {
             return redirect()->route('account.login')

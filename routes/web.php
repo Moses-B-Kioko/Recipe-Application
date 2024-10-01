@@ -11,7 +11,7 @@ use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\TempImagesController; 
 use App\Http\Controllers\admin\SubGenreController; 
 use App\Http\Controllers\FrontController; 
-use App\Http\Controllers\BookController; 
+//use App\Http\Controllers\BookController; 
 use App\Http\Controllers\BookSubGenreController; 
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
@@ -55,9 +55,9 @@ Route::group(['prefix' => 'account'], function () {
     });
 });
          //Book Routes
-         Route::get('/books/create', [BookController::class, 'create'])->name('admin.create');
+         //Route::get('/books/create', [BookController::class, 'create'])->name('admin.create');
          Route::get('/book-subgenres', [BookSubGenreController::class, 'index'])->name('book-subgenres.index');
-
+         Route::post('/books',[AuthController::class,'store'])->name('account.store');
 
 
 // Define a route for the admin login page. When accessed, it calls the 'index' method of the 'AdminLoginController'.

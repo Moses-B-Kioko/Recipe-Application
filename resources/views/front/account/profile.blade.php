@@ -166,7 +166,7 @@
                             </div>
 
                             <div class="pb-5 pt-3">
-                                <button class="btn btn-primary">Create</button>
+                                <button type="submit" class="btn btn-primary">Create</button>
                                 <a href="products.html" class="btn btn-outline-dark ml-3">Cancel</a>
                             </div>
                         </form>
@@ -199,11 +199,11 @@
 
     $("#bookForm").submit(function(event){
         event.preventDefault();
-
+        var formArray = $(this).serializeArray();
         $.ajax({
-            url: '',
+            url: '{{ route("account.store")}}',
             type: 'post',
-            data: {},
+            data: formArray,
             dataType: 'json',
             success: function(response) {
 
