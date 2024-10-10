@@ -16,8 +16,7 @@ return [
     |
     */
 
-    
-    'driver' => 'gd', // or 'imagick'
+    'driver' => \Intervention\Image\Drivers\Gd\Driver::class,
 
     /*
     |--------------------------------------------------------------------------

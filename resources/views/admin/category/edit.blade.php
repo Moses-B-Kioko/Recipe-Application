@@ -55,11 +55,9 @@
                         </div>	
                         @if(!empty($category->image))
                         <div>
-                            <img width="250" src="{{ asset('uploads/category/thumb/'.
-                            $category->image)}}" alt="">
+                            <img id="uploadedImage" width="250" src="{{ asset('uploads/category/thumb/'.$category->image) }}" alt="">
                         </div>
-                        @endif
-                        		
+                        @endif	
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="status">Show on Home</label>
@@ -146,6 +144,8 @@
     success: function(file, response) {
       if (response.image_id) {
         $("#image_id").val(response.image_id);
+          // Show the uploaded image
+      $("#uploadedImage").attr('src', response.Imagepath).show();
       } else {
         console.log("No image_id received from the server.");
         alert("File uploaded but no image ID received.");

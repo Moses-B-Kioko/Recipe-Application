@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Category;
 use App\Models\TempImage;
 use Illuminate\Support\Facades\File;
-use Intervention\Image\Laravel\Facades\Image;
-
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 
 class CategoryController extends Controller
@@ -30,56 +30,65 @@ class CategoryController extends Controller
     }
 
     public function store(Request $request)
-{
-    $validator = Validator::make($request->all(), [
-        'name' => 'required',
-        
-    ]);
-
-    if ($validator->passes()) {
-        $category = new Category();
-        $category->name = $request->name;
-        $category->status = $request->status;
-        $category->showHome = $request->showHome;
-        $category->save();
-
-        // Save Image Here
-        if (!empty($request->image_id)) {
-            $tempImage = TempImage::find($request->image_id);
-            $extArray = explode('.', $tempImage->name);
-            $ext = end($extArray); // Use end() instead of last()
-
-            $newImageName = $category->id . '.' . $ext;
-            $sPath = public_path('temp/' . $tempImage->name);
-            $dPath = public_path('uploads/category/' . $newImageName);
-
-            // Copy original image
-            File::copy($sPath, $dPath);
-
-            // Generate Image Thumbnail
-           // $thumbPath = public_path('uploads/category/thumb/'. $newImageName);
-            //$img = Image::make($dPath)->fit(450, 600, function ($constraint) {
-             //   $constraint->upsize();
-            //});
-            //$img->save($thumbPath);
-
-            $category->image = $newImageName;
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+        ]);
+    
+        if ($validator->passes()) {
+            $category = new Category();
+            $category->name = $request->name;
+            $category->status = $request->status;
+            $category->showHome = $request->showHome;
             $category->save();
+    
+            // Save Image Here
+            if (!empty($request->image_id)) {
+                $tempImage = TempImage::find($request->image_id);
+                $extArray = explode('.', $tempImage->name);
+                $ext = end($extArray);
+    
+                $newImageName = $category->id . '.' . $ext;
+                $sPath = public_path('/temp/' . $tempImage->name);
+                $dPath = public_path('/uploads/category/' . $newImageName);
+    
+                // Ensure the uploads/category directory exists
+                if (!File::exists(public_path('/uploads/category'))) {
+                    File::makeDirectory(public_path('/uploads/category'), 0755, true);
+                }
+    
+                // Copy original image
+                File::copy($sPath, $dPath);
+    
+                // Generate Image Thumbnail
+                $dPath = public_path('/uploads/category/thumb/' . $tempImage->name);
+    
+                // Create image manager with desired driver
+                $manager = new ImageManager(new Driver());
+                // Read image from file system
+                $image = $manager->read($sPath);
+                // Image Crop
+                $image->cover(450, 600);
+                // Save the file
+                $image->save($dPath);
+
+                $category->image = $newImageName;
+                $category->save();
+            }
+    
+            $request->session()->flash('success', 'Genre added successfully');
+    
+            return response()->json([
+                'status' => true,
+                'message' => 'Genre added successfully'
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors()
+            ]);
         }
-
-        $request->session()->flash('success', 'Genre added successfully');
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Genre added successfully'
-        ]);
-    } else {
-        return response()->json([
-            'status' => false,
-            'errors' => $validator->errors()
-        ]);
-    }
-}
+    }    
 
 
     public function edit($categoryId, Request $request){
@@ -92,80 +101,85 @@ class CategoryController extends Controller
         return view('admin.category.edit', compact('category'));
     }
 
-    public function update($categoryId, Request $request){
+    public function update($categoryId, Request $request)
+{
 
-        $category = Category::find($categoryId);
-
-        if(empty($category)) {
-            $request->session()->flash('error', 'Genre not found');
-
-            return response()->json([
-                'status' => false,
-                'notFound' => true,
-                'message' => 'Genre not found'
-            ]);
-        }
-
-        $validator = Validator::make($request->all(),[
-            'name' => 'required',
+    $category = Category::find($categoryId);
+    if(empty($category)) {
+        return response()->json([
+            'status' => false,
+            'notFound' => true,
+            'message' => 'Category not found'
         ]);
+    }
 
-        if($validator->passes()) {
+    $validator = Validator::make($request->all(), [
+        'name' => 'required',
+    ]);
 
-            $category->name = $request->name;
-            $category->status = $request->status;
-            $category->showHome = $request->showHome;
+    if ($validator->passes()) {
+
+        $category->name = $request->name;
+        $category->status = $request->status;
+        $category->showHome = $request->showHome;
+        $category->save();
+
+        $oldImage = $category->image;
+
+        // Save Image Here
+        if (!empty($request->image_id)) {
+            $tempImage = TempImage::find($request->image_id);
+            $extArray = explode('.', $tempImage->name);
+            $ext = end($extArray);
+
+            $newImageName = $category->id.'-'.time(). '.' . $ext;
+            $sPath = public_path('/temp/' . $tempImage->name);
+            $dPath = public_path('/uploads/category/' . $newImageName);
+
+            
+         
+ 
+
+            // Ensure the uploads/category directory exists
+            //if (!File::exists(public_path('/uploads/category'))) {
+              //  File::makeDirectory(public_path('/uploads/category'), 0755, true);
+            //}
+
+            // Copy original image
+            File::copy($sPath, $dPath);
+
+            // Generate Image Thumbnail
+            $dPath = public_path('/uploads/category/thumb/' . $tempImage->name);
+
+            // Create image manager with desired driver
+            $manager = new ImageManager(new Driver());
+            // Read image from file system
+            $image = $manager->read($sPath);
+            $image->cover(450, 600);
+            $image->save($dPath);
+
+            $category->image = $newImageName;
             $category->save();
 
-            $oldImage = $category->image;
-
-            //Save Image Here
-            if(!empty($request->image_id)){
-                $tempImage = TempImage::find($request->image_id);
-                $extArray = explode('.', $tempImage->name);
-                $ext = end($extArray);
-
-                $newImageName = $category->id . '-' . time() . '.' . $ext;
-                $sPath = public_path().'/temp/'.$tempImage->name;
-                $dPath = public_path().'/uploads/category/'.$newImageName;
-                File::copy($sPath,$dPath);
-
-                //Generate Image Thumbnail
-                $dPath1 = public_path().'/uploads/category/thumb/'.$newImageName;
-                $img = Image::make($sPath1);
-                //$img->resize(450, 600);
-                $img = $img->fit(450, 600, function ($constraint) {
-                    $constraint->upsize();
-                });
-                $img->save($dPath1);
-
-                $category->image = $newImageName;
-                $category->save();
-
-                //Delete Old Images Here
-                File::delete(public_path().'/uploads/category/thumb/'.$oldImage);
-                File::delete(public_path().'/uploads/category/'.$oldImage);
-
-
-            }
-
-
-            $request->session()->flash('success', 'Genre updated successfully');
-
-
-            return response()->json([
-                'status' => true,
-                'message' => 'Genre updated successfully',
-                'category' => $category // Send the category object with name property
-            ]);
-
-        } else {
-            return response()->json([
-                'status' => false,
-                'errors' => $validator->errors()
-            ]);
+             // Delete Old Images Here
+             File::delete(public_path() . '/uploads/category/thumb/' .$oldImage);
+             File::delete(public_path() . '/uploads/category/' .$oldImage);
         }
-    } 
+
+        $request->session()->flash('success', 'Genre updated successfully');
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Genre updated successfully'
+        ]);
+    } else {
+        return response()->json([
+            'status' => false,
+            'errors' => $validator->errors()
+        ]);
+    }
+}
+
 
     public function destroy($categoryId, Request $request ){
         $category = Category::find($categoryId);

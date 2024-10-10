@@ -8,4 +8,18 @@ use Illuminate\Database\Eloquent\Model;
 class Book extends Model
 {
     use HasFactory;
+
+    public function book_images() {
+        return $this->hasMany(BookImage::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function subGenre()
+    {
+        return $this->belongsTo(SubGenre::class);
+    }
 }

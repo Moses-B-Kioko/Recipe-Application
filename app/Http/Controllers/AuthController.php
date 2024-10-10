@@ -62,8 +62,8 @@ class AuthController extends Controller
                 $user = Auth::user(); // You don't need to use a guard again if Auth::attempt succeeded
                 
                 if ($user->role == 1) {
-                    // Redirect to profile for authorized user
-                    return redirect()->route('account.profile'); 
+                    // Redirect to books for authorized user
+                    return redirect()->route('books.create'); 
                 } else {
                     // Log out unauthorized users
                     Auth::logout();
@@ -114,10 +114,15 @@ class AuthController extends Controller
 
     public function logout() {
         Auth::logout();
+        session()->invalidate();
         return redirect()->route('account.login')
         ->with('success', 'You successfully logged out!');
     }
     public function product() {
         return view('front.account.product');
+    }
+
+    public function store(Request $request) {
+
     }
 }

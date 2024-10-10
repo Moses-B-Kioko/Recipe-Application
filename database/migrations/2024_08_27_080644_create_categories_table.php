@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug');
-            $table->string('image')->dafault(NULL);   
-            $table->integer('status')->dafault(1);
+            $table->string('image')->default(NULL);   
+            $table->integer('status')->default(1);
             $table->timestamps();
         });
     }

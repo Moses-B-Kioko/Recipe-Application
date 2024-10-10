@@ -11,7 +11,8 @@ use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\TempImagesController; 
 use App\Http\Controllers\admin\SubGenreController; 
 use App\Http\Controllers\FrontController; 
-//use App\Http\Controllers\BookController; 
+use App\Http\Controllers\BookController; 
+use App\Http\Controllers\BookImageController; 
 use App\Http\Controllers\BookSubGenreController; 
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
@@ -49,15 +50,24 @@ Route::group(['prefix' => 'account'], function () {
 
     Route::group(['middleware' => 'auth'], function() {
         Route::get('/profile', [AuthController::class, 'profile'])->name('account.profile');
+        Route::post('/books',[BookController::class,'store'])->name('books.store');
         Route::get('/product', [AuthController::class, 'product'])->name('account.product');
         Route::get('/logout',[AuthController::class,'logout'])->name('account.logout');
 
     });
 });
          //Book Routes
-         //Route::get('/books/create', [BookController::class, 'create'])->name('admin.create');
+         Route::get('/books',[BookController::class,'index'])->name('books.index');
+         Route::get('/books/create', [BookController::class, 'create'])->name('books.create');
          Route::get('/book-subgenres', [BookSubGenreController::class, 'index'])->name('book-subgenres.index');
-         Route::post('/books',[AuthController::class,'store'])->name('account.store');
+         Route::get('/books/{book}/edit', [BookController::class, 'edit'])->name('books.edit');
+         Route::put('/books/{book}', [BookController::class, 'update'])->name('books.update');
+
+         Route::post('/book-images/update',[BookImageController::class,'update'])->name('book-images.update');
+         Route::delete('/book-images',[BookImageController::class,'destroy'])->name('book-images.destroy');
+         Route::delete('/books/{book}',[BookController::class,'destroy'])->name('books.delete');
+
+
 
 
 // Define a route for the admin login page. When accessed, it calls the 'index' method of the 'AdminLoginController'.
@@ -111,7 +121,7 @@ Route::group(['prefix' => 'admin'], function () {
 
 
         //temp-images.create
-        Route::post('/upload-temp-image', [TempImagesController::class, 'create'])->name('temp-images.create');
+        Route::post('upload-temp-image', [TempImagesController::class, 'create'])->name('temp-images.create');
 
 
 
