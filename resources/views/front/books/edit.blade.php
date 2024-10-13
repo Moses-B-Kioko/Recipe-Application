@@ -56,6 +56,14 @@
                                                 </div>
                                                 <div class="col-md-12">
                                                     <div class="mb-3">
+                                                        <label for="slug">Slug</label>
+                                                        <input type="text" readonly name="slug" id="slug" class="form-control" 
+                                                        placeholder="Slug" value="{{ $book->slug}}">	
+                                                        <p class="error"></p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="mb-3">
                                                         <label for="author">Author</label>
                                                         <input type="author" name="author" id="author" class="form-control" 
                                                         placeholder="Author" value="{{ $book->author}}">	
@@ -64,10 +72,22 @@
                                                 </div>
                                                 <div class="col-md-12">
                                                     <div class="mb-3">
+                                                        <label for="description">Short Description</label>
+                                                        <textarea name="short_description" id="short_description" cols="30" rows="10" class="summernote" placeholder="Short Description">{{ $book->short_description}}</textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="mb-3">
                                                         <label for="description">Description</label>
                                                         <textarea name="description" id="description" cols="30" rows="10" class="summernote" placeholder="Description">{{ $book->description}}</textarea>
                                                     </div>
+                                                </div><div class="col-md-12">
+                                                    <div class="mb-3">
+                                                        <label for="description">Shipping and Returns</label>
+                                                        <textarea name="shipping_returns" id="shipping_returns" cols="30" rows="10" class="summernote" placeholder="Shipping and Returns">{{ $book->shipping_returns}}</textarea>
+                                                    </div>
                                                 </div>
+                                                
                                                 <!-- Product Status Section -->
                                                 <div class="col-md-12">
                                                     <div class="mb-3">
@@ -108,13 +128,16 @@
                                                     <div class="mb-3">
                                                         <label for="condition">Condition of Book</label>
                                                         <select name="condition" id="condition" class="form-control">
-                                                            <option {{ ($book->is_featured == 'Good') ? 'selected' : '' }} value="Good">Good</option>
-                                                            <option {{ ($book->is_featured == 'Okay') ? 'selected' : '' }} value="Okay">Okay</option>
-                                                            <option {{ ($book->is_featured == 'Bad') ? 'selected' : '' }} value="Bad">Bad</option>
+                                                        <option {{ ($book->is_featured == 'Perfect') ? 'selected' : '' }} value="Perfect">Perfect</option>
+                                                        <option {{ ($book->is_featured == 'Good') ? 'selected' : '' }} value="Good">Good</option>
+                                                        <option {{ ($book->is_featured == 'Okay') ? 'selected' : '' }} value="Okay">Okay</option>
+                                                        <option {{ ($book->is_featured == 'Not That Okay') ? 'selected' : '' }} value="Not That Okay">Not That Okay</option>
+                                                        <option {{ ($book->is_featured == 'Bad') ? 'selected' : '' }} value="Bad">Bad</option>
                                                         </select>
                                                         <p class="error"></p>
                                                     </div>
                                                 </div>
+
                                                 <!-- Featured Product Section -->
                                                 <div class="col-md-12">
                                                     <div class="mb-3">
@@ -126,6 +149,8 @@
                                                         <p class="error"></p>
                                                     </div>
                                                 </div>
+                                                
+
                                             </div>
                                         </div>
                                     </div>
@@ -210,10 +235,28 @@
                                                         class="form-control" placeholder="Qty" value="{{ $book->qty}}">	
                                                         <p class="error"></p>
                                                     </div>
-                                                </div>                                         	                                         
+                                                </div>                                        	                                         
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                             <div class="col-md-12">
+                                                    <div class="mb-3">
+                                                    <h2 class="h4 mb-3">Related Book</h2>								
+                                                    <select multiple class="related-book w-100" name="related_books[]" id="related_books">
+                                                            @if (!empty($relatedBooks))
+                                                                @foreach ($relatedBooks as $relBook)
+                                                                    <option selected value="{{ $relBook->id}}">{{ $relBook->title}}</option>
+                                                                @endforeach
+                                                            @endif
+                                                        </select>
+                                                        <p class="error"></p>
+                                                    </div>
+                                                </div> 
+                                            </div> 
+                                        </div> 
+                                                
                                 </div>
                             </div>
 
@@ -234,6 +277,55 @@
         
 
         <script>
+
+        $('.related-book').select2({
+            ajax: {
+                url: '{{ route("books.getBooks") }}',
+                dataType: 'json',
+                tags: true,
+                multiple: true,
+                minimumInputLength: 3,
+                processResults: function (data) {
+                    return {
+                        results: data.tags
+                    };
+                }
+            }
+        }); 
+
+            // Function to convert the name to a slug
+    function generateSlug(text) {
+        return text.toString().toLowerCase()
+            .replace(/\s+/g, '-')           // Replace spaces with -
+            .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+            .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+            .replace(/^-+/, '')             // Trim - from start of text
+            .replace(/-+$/, '');            // Trim - from end of text
+    }
+
+    // Automatically update the slug field when the name field is changed
+    $('#title').on('keyup', function() {
+        var name = $(this).val();
+        var slug = generateSlug(name);
+        $('#slug').val(slug);  // Assign the generated slug to the slug input field
+    });
+
+            $("#title").change(function(){
+        element = $(this);
+        $("button[type=submit]").prop('disabled',true);
+        $.ajax({
+            url: '{{ route("getSlug") }}',
+            type: 'get',
+            data: {title: element.val()},
+            dataType: 'json',
+            success: function(response){
+                $("button[type=submit]").prop('disabled', false);
+                if(response["status"] == true) {
+                    $("#slug").val(response["slug"]);
+                }
+            }
+        });
+    });
 
                     $.ajaxSetup({
                         headers: {

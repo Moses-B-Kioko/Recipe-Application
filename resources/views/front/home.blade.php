@@ -17,7 +17,7 @@
                         <div class="p-3">
                             <h1 class="display-4 text-white mb-3">Kids Genre</h1>
                             <p class="mx-md-5 px-5">Lorem rebum magna amet lorem magna erat diam stet. Sadips duo stet amet amet ndiam elitr ipsum diam</p>
-                            <a class="btn btn-outline-light py-2 px-4 mt-3" href="#">Shop Now</a>
+                            <a class="btn btn-outline-light py-2 px-4 mt-3" href="{{ route('front.shop')}}">Shop Now</a>
                         </div>
                     </div>
                 </div>
@@ -106,7 +106,7 @@
                     <div class="cat-card">
                         <div class="left">
                             @if ($category->image != "")
-                            <img src="{{ asset('/uploads/book/small/'.$category->image) }}" alt="" class="img-fluid">
+                            <img src="{{ asset('/uploads/category/thumb/'.$category->image) }}" alt="" class="img-fluid">
                             @endif
                             <!--<img src="{{ asset('front-assets/images/cat-1.jpg')}}" alt="" class="img-fluid"> -->
                         </div>
@@ -139,18 +139,18 @@
                      <div class="col-md-3">
                     <div class="card product-card">
                         <div class="product-image position-relative">
-                            <a href="" class="product-img">
+                            <a href="{{route('front.book',$book->slug)}}" class="product-img">
 
                                 @if (!empty($bookImage->image))  
                                 <img class="card-img-top" src="{{ asset('./uploads/book/small/'.$bookImage->image)}}" >
                                 @else 
                                 <img src="{{ asset('admin-assets/img/default-150x150.png')}}" />
-                                    @endif
+                                @endif
                             </a>
                             <a class="whishlist" href="222"><i class="far fa-heart"></i></a>                            
 
                             <div class="product-action">
-                                <a class="btn btn-dark" href="#">
+                                <a class="btn btn-dark" href="javascript:void(0);" onclick="addToCart({{$book->id }});">
                                     <i class="fa fa-shopping-cart"></i> Add To Cart
                                 </a>                            
                             </div>
@@ -189,7 +189,7 @@
                      <div class="col-md-3">
                     <div class="card product-card">
                         <div class="product-image position-relative">
-                            <a href="" class="product-img">
+                            <a href="{{route('front.book',$book->slug)}}" class="product-img">
 
                                 @if (!empty($bookImage->image))  
                                 <img class="card-img-top" src="{{ asset('./uploads/book/small/'.$bookImage->image)}}" >
@@ -200,7 +200,7 @@
                             <a class="whishlist" href="222"><i class="far fa-heart"></i></a>                            
 
                             <div class="product-action">
-                                <a class="btn btn-dark" href="#">
+                                <a class="btn btn-dark" href="javascript:void(0);" onclick="addToCart({{$book->id }});">
                                     <i class="fa fa-shopping-cart"></i> Add To Cart
                                 </a>                            
                             </div>

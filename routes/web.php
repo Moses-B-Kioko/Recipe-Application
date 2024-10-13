@@ -15,6 +15,8 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\BookImageController; 
 use App\Http\Controllers\BookSubGenreController; 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ShopController;
+use App\Http\Controllers\CartController;
 use Illuminate\Http\Request;
 
 /*
@@ -34,7 +36,13 @@ use Illuminate\Http\Request;
  //   return view('welcome');
 //});
 Route::get('/',[FrontController::class,'index'])->name('front.home');
- 
+Route::get('/shop/{categorySlug?}/{subGenreSlug?}',[ShopController::class,'index'])->name('front.shop');
+Route::get('/book/{slug}',[ShopController::class,'book'])->name('front.book');
+Route::get('/cart',[CartController::class,'cart'])->name('front.cart');
+Route::post('/add-to-cart',[CartController::class,'addToCart'])->name('front.addToCart');
+Route::post('/update-cart',[CartController::class,'updateCart'])->name('front.updateCart');
+Route::post('/delete-item',[CartController::class,'deleteItem'])->name('front.deleteItem.cart');
+
 
 //Route::get('/login',[AuthController::class,'login'])->name('account.login');
 
@@ -66,6 +74,7 @@ Route::group(['prefix' => 'account'], function () {
          Route::post('/book-images/update',[BookImageController::class,'update'])->name('book-images.update');
          Route::delete('/book-images',[BookImageController::class,'destroy'])->name('book-images.destroy');
          Route::delete('/books/{book}',[BookController::class,'destroy'])->name('books.delete');
+         Route::get('/get-books',[BookController::class,'getBooks'])->name('books.getBooks');
 
 
 

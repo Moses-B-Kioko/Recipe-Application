@@ -46,6 +46,7 @@
 									<tr>
 										<th width="60">ID</th>
 										<th style="padding-left: 30px;">Name</th> <!-- Increased padding for Name column -->
+										<th style="padding-left: 30px;">Slug</th>
 										<th>Genre</th>
 										<th width="100">Status</th>
 										<th width="100">Action</th>
@@ -57,6 +58,7 @@
 											<tr>
 												<td>{{ $subGenres->id }}</td>
 												<td style="padding-left: 30px;">{{ $subGenres->name }}</td> <!-- Applied padding to individual rows as well -->
+												<td style="padding-left: 30px;">{{ $subGenres->slug }}</td>
 												<td>{{$subGenres->genreName}}</td>
 												<td>
 													@if($subGenres->status == 1)

@@ -9,12 +9,15 @@
 
     <link rel="stylesheet" type="text/css" href="{{ asset('front-assets/css/slick.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('front-assets/css/slick-theme.css')}}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('front-assets/css/ion.rangeSlider.min.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('front-assets/css/style.css')}}" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;500&family=Raleway:ital,wght@0,400;0,600;0,800;1,200&family=Roboto+Condensed:wght@400;700&family=Roboto:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('admin-assets/plugins/summernote/summernote.min.css')}}">
+    <link rel="stylesheet" href="{{ asset('admin-assets/plugins/select2/css/select2.min.css')}}">
+
 
     <!-- Fav Icon -->
     <link rel="shortcut icon" type="image/x-icon" href="#" />
@@ -48,7 +51,7 @@
 <header class="bg-dark">
     <div class="container">
         <nav class="navbar navbar-expand-xl" id="navbar">
-            <a href="index.php" class="text-decoration-none mobile-logo">
+            <a href="{{ route('front.home')}}" class="text-decoration-none mobile-logo">
                 <span class="h2 text-uppercase text-primary bg-dark">THE</span>
                 <span class="h2 text-uppercase text-white px-2">BOOKERY</span>
             </a>
@@ -66,7 +69,7 @@
                         @if($category->sub_genre->isNotEmpty())
                         <ul class="dropdown-menu dropdown-menu-dark">
                         @foreach ($category->sub_genre as $subGenres)
-                        <li><a class="dropdown-item nav-link" href="#">{{$subGenres->name}}</a></li>
+                        <li><a class="dropdown-item nav-link" href="{{ route('front.shop',[$category->slug, $subGenres->slug]) }}">{{$subGenres->name}}</a></li>
                         @endforeach
                         </ul>
                         @endif 
@@ -76,7 +79,7 @@
                 </ul>      			
             </div>   
             <div class="right-nav py-0 d-flex align-items-center">
-                <a href="cart.php" class="ml-3 d-flex pt-2">
+                <a href="{{ route('front.cart')}}" class="ml-3 d-flex pt-2">
                     <i class="fas fa-shopping-cart text-primary"></i>
                 </a>
                 <a href="{{ route('account.register')}}" class="btn btn-warning" style="background-color: yellow; color: black; margin-left: 30px;">Sell</a>
@@ -145,6 +148,7 @@
 <script src="{{ asset('front-assets/js/instantpages.5.1.0.min.js')}}"></script>
 <script src="{{ asset('front-assets/js/lazyload.17.6.0.min.js')}}"></script>
 <script src="{{ asset('front-assets/js/slick.min.js')}}"></script>
+<script src="{{ asset('front-assets/js/ion.rangeSlider.min.js')}}"></script>
 <script src="{{ asset('front-assets/js/custom.js')}}"></script>
 
 <!-- AdminLTE Plugins -->
@@ -153,6 +157,8 @@
 <script src="{{ asset('admin-assets/plugins/dropzone/min/dropzone.min.js')}}"></script>
 <script src="{{ asset('admin-assets/js/demo.js')}}"></script>
 <script src="{{ asset('admin-assets/plugins/summernote/summernote.min.js')}}"></script>
+<script src="{{ asset('admin-assets/plugins/select2/js/select2.min.js')}}"></script>
+
 
 <script>
 window.onscroll = function() {myFunction()};
@@ -177,6 +183,22 @@ $.ajaxSetup({
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
 });
+
+function addToCart(id) {
+        $.ajax({
+            url: '{{ route("front.addToCart")}}',
+            type: 'post',
+            data: {id:id},
+            dataType: 'json',
+            success: function(response) {
+                if(response.status == true) {
+                    window.location.href = "{{ route('front.cart')}}";
+                } else {
+                    alert(response.message);
+                }
+            }
+        });
+    }
 </script>
 @yield('scripts')
 </body>

@@ -46,6 +46,7 @@
 									<tr>
 										<th width="60">ID</th>
 										<th style="width: 200px;">Name</th> <!-- Set a fixed width for Name -->
+										<th style="width: 60px;">Slug</th> <!-- Set a fixed width for Name -->
 										<th width="80" class="text-center">Status</th> <!-- Reduce width for Status -->
 										<th width="100">Action</th>
 									</tr>
@@ -56,6 +57,7 @@
 											<tr>
 												<td>{{ $category->id }}</td>
 												<td>{{ $category->name }}</td>
+												<td>{{ $category->slug }}</td>
 												<td class="text-center">
 													@if($category->status == 1)
 														<svg class="text-success-500 h-6 w-6 text-success" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">

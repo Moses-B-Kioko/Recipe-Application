@@ -45,7 +45,14 @@
                                                 <input type="text" name="name" id="name" class="form-control" placeholder="Name" value="{{ $subGenre->name }}">	
                                                 <p></p>
                                             </div>
-                                        </div>		
+                                        </div>	
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="slug">Slug</label>
+                                                <input type="text"  name="slug" id="slug" class="form-control" placeholder="Slug" value="{{ $subGenre->slug }}">	
+                                                <p></p>
+                                            </div>
+                                        </div>	
                                         <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label for="status">Status</label>
@@ -81,6 +88,23 @@
 
 @section('customJs')
 <script>
+
+    // Function to convert the name to a slug
+    function generateSlug(text) {
+        return text.toString().toLowerCase()
+            .replace(/\s+/g, '-')           // Replace spaces with -
+            .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+            .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+            .replace(/^-+/, '')             // Trim - from start of text
+            .replace(/-+$/, '');            // Trim - from end of text
+    }
+
+    // Automatically update the slug field when the name field is changed
+    $('#name').on('keyup', function() {
+        var name = $(this).val();
+        var slug = generateSlug(name);
+        $('#slug').val(slug);  // Assign the generated slug to the slug input field
+    });
 
 $("#subGenreForm").submit(function(event){
     event.preventDefault();

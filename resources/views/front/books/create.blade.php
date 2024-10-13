@@ -54,6 +54,13 @@
                                                 </div>
                                                 <div class="col-md-12">
                                                     <div class="mb-3">
+                                                        <label for="slug">Slug</label>
+                                                        <input type="text" readonly name="slug" id="slug" class="form-control" placeholder="Slug">	
+                                                        <p class="error"></p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="mb-3">
                                                         <label for="author">Author</label>
                                                         <input type="author" name="author" id="author" class="form-control" placeholder="Author">	
                                                         <p class="error"></p>
@@ -61,8 +68,19 @@
                                                 </div>
                                                 <div class="col-md-12">
                                                     <div class="mb-3">
+                                                        <label for="description">Short Description</label>
+                                                        <textarea name="short_description" id="short_description" cols="30" rows="10" class="summernote" placeholder="Short Description"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="mb-3">
                                                         <label for="description">Description</label>
                                                         <textarea name="description" id="description" cols="30" rows="10" class="summernote" placeholder="Description"></textarea>
+                                                    </div>
+                                                </div><div class="col-md-12">
+                                                    <div class="mb-3">
+                                                        <label for="description">Shipping and Returns</label>
+                                                        <textarea name="shipping_returns" id="shipping_returns" cols="30" rows="10" class="summernote" placeholder="Shipping and Returns"></textarea>
                                                     </div>
                                                 </div>
                                                 <!-- Product Status Section -->
@@ -100,9 +118,11 @@
                                                     <div class="mb-3">
                                                         <label for="condition">Condition of Book</label>
                                                         <select name="condition" id="condition" class="form-control">
-                                                            <option value="Good">Good</option>
-                                                            <option value="Okay">Okay</option>
-                                                            <option value="Bad">Bad</option>
+                                                        <option value="Perfect">Perfect</option>
+                                                        <option value="Good">Good</option>
+                                                        <option value="Okay">Okay</option>
+                                                        <option value="Not that Okay">Not that Okay</option>
+                                                        <option value="Bad">Bad</option>
                                                         </select>
                                                         <p class="error"></p>
                                                     </div>
@@ -191,6 +211,18 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                             <div class="col-md-12">
+                                                    <div class="mb-3">
+                                                    <h2 class="h4 mb-3">Related Book</h2>								
+                                                    <select multiple class="related-book w-100" name="related_books[]" id="related_books">
+                                                        </select>
+                                                        <p class="error"></p>
+                                                    </div>
+                                                </div> 
+                                            </div> 
+                                        </div> 
                                 </div>
                             </div>
 
@@ -211,6 +243,38 @@
         
 
         <script>
+            $('.related-book').select2({
+            ajax: {
+                url: '{{ route("books.getBooks") }}',
+                dataType: 'json',
+                tags: true,
+                multiple: true,
+                minimumInputLength: 3,
+                processResults: function (data) {
+                    return {
+                        results: data.tags
+                    };
+                }
+            }
+        });
+
+
+$("#title").change(function(){
+        element = $(this);
+        $("button[type=submit]").prop('disabled',true);
+        $.ajax({
+            url: '{{ route("getSlug") }}',
+            type: 'get',
+            data: {title: element.val()},
+            dataType: 'json',
+            success: function(response){
+                $("button[type=submit]").prop('disabled', false);
+                if(response["status"] == true) {
+                    $("#slug").val(response["slug"]);
+                }
+            }
+        });
+    });
 
                     $.ajaxSetup({
                         headers: {
@@ -327,8 +391,6 @@ const dropzone = $("#image").dropzone({
 function deleteImage(id) {
     $("#image-row-" + id).remove();  // Include the hyphen to match the id
 }
-
-
 
         </script>
         

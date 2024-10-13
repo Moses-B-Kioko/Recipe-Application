@@ -33,11 +33,13 @@ class CategoryController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
+            'slug' => 'required|unique:categories',
         ]);
     
         if ($validator->passes()) {
             $category = new Category();
             $category->name = $request->name;
+            $category->slug = $request->slug;
             $category->status = $request->status;
             $category->showHome = $request->showHome;
             $category->save();
@@ -115,11 +117,13 @@ class CategoryController extends Controller
 
     $validator = Validator::make($request->all(), [
         'name' => 'required',
+        'slug' => 'required|unique:categories,slug,'.$category->id.',id',
     ]);
 
     if ($validator->passes()) {
 
         $category->name = $request->name;
+        $category->slug = $request->slug;
         $category->status = $request->status;
         $category->showHome = $request->showHome;
         $category->save();
@@ -136,9 +140,6 @@ class CategoryController extends Controller
             $sPath = public_path('/temp/' . $tempImage->name);
             $dPath = public_path('/uploads/category/' . $newImageName);
 
-            
-         
- 
 
             // Ensure the uploads/category directory exists
             //if (!File::exists(public_path('/uploads/category'))) {
@@ -162,8 +163,8 @@ class CategoryController extends Controller
             $category->save();
 
              // Delete Old Images Here
-             File::delete(public_path() . '/uploads/category/thumb/' .$oldImage);
-             File::delete(public_path() . '/uploads/category/' .$oldImage);
+             File::delete(public_path() . '/uploads/category/thumb/'.$oldImage);
+             File::delete(public_path() . '/uploads/category/'.$oldImage);
         }
 
         $request->session()->flash('success', 'Genre updated successfully');

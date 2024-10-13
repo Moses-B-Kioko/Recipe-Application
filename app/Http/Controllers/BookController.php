@@ -43,13 +43,14 @@ class BookController extends Controller
         //exit();
         $rules = [
             'title' => 'required',
+            'slug' => 'required',
             'author' => 'required',
             'price' => 'required|numeric',
             'description' => 'required',
             'track_qty' => 'required|in:Yes,No',
             'category' => 'required|numeric',
             'is_featured' => 'required|in:Yes,No',
-            'condition' => 'required|in:Good,Okay,Bad',
+            'condition' => 'required|in:Perfect,Good,Okay,Not That Okay,Bad',
         ];
 
         if (!empty($request->track_qty) && $request->track_qty == 'Yes') {
@@ -66,6 +67,7 @@ class BookController extends Controller
         if ($validator->passes()) {
             $book = new Book;
             $book->title = $request->title;
+            $book->slug = $request->slug;
             $book->author = $request->author;
             $book->description = $request->description;
             $book->price = $request->price;
@@ -73,10 +75,13 @@ class BookController extends Controller
             $book->track_qty = $request->track_qty;
             $book->qty = $request->qty;
             $book->status = $request->status;
-            $book->genre_id = $request->category; 
+            $book->category_id = $request->category; 
             $book->sub_genre_id = $request->sub_category;
             $book->is_featured = $request->is_featured;
             $book->Condition = $request->condition;
+            $book->shipping_returns = $request->shipping_returns;
+            $book->short_description = $request->short_description;
+            $book->related_books = (!empty($request->related_books)) ? implode(',',$request->related_books) : '';
             $book->save();
 
 
@@ -149,13 +154,20 @@ class BookController extends Controller
 
         $subGenres = SubGenre::where('category_id',$book->category_id)->get();
 
+        $relatedBooks = [];
+        // Fetch related books
+        if($book->related_books != '') {
+            $bookArray = explode(',',$book->related_books);
+            $relatedBooks = Book::whereIn('id',$bookArray)->with('book_images')->get();
+        }
+
         $data = [];
-        
         $categories = Category::orderBy('name','ASC')->get();
         $data['categories'] = $categories;
         $data['book'] = $book;
         $data['subGenres'] = $subGenres;
         $data['bookImages'] = $bookImages;
+        $data['relatedBooks'] = $relatedBooks;
 
 
         return view('front.books.edit', $data);
@@ -166,13 +178,14 @@ class BookController extends Controller
 
         $rules = [
             'title' => 'required',
+            'slug' => 'required',
             'author' => 'required',
             'price' => 'required|numeric',
             'description' => 'required',
             'track_qty' => 'required|in:Yes,No',
             'category' => 'required|numeric',
             'is_featured' => 'required|in:Yes,No',
-            'condition' => 'required|in:Good,Okay,Bad',
+            'condition' => 'required|in:Perfect,Good,Okay,Not That Okay,Bad',
         ];
 
         if (!empty($request->track_qty) && $request->track_qty == 'Yes') {
@@ -189,6 +202,7 @@ class BookController extends Controller
         if ($validator->passes()) {
 
             $book->title = $request->title;
+            $book->slug = $request->slug;
             $book->author = $request->author;
             $book->description = $request->description;
             $book->price = $request->price;
@@ -196,12 +210,14 @@ class BookController extends Controller
             $book->track_qty = $request->track_qty;
             $book->qty = $request->qty;
             $book->status = $request->status;
-            $book->genre_id = $request->category; 
+            $book->category_id = $request->category; 
             $book->sub_genre_id = $request->sub_category;
             $book->is_featured = $request->is_featured;
             $book->Condition = $request->condition;
+            $book->shipping_returns = $request->shipping_returns;
+            $book->short_description = $request->short_description;
+            $book->related_books = (!empty($request->related_books)) ? implode(',',$request->related_books) : '';
             $book->save();
-
 
             //Save Gallery Pics
             $request->session()->flash('success', 'Book updated successfully');
@@ -250,6 +266,25 @@ class BookController extends Controller
                 'status' => true,
                 'message' => "Book deleted successfully"
             ]);
+    }
+
+    public function getBooks(Request $request) {
+
+        $tempBook = [];
+        if($request->term != "") {
+            $books = Book::where('title','like','%'.$request->term.'%')->get();
+
+            if($books != null) {
+                foreach ($books as $book) {
+                    $tempBook[] = array('id' => $book->id, 'text' => $book->title);
+                }
+            }
+        }
+
+        return response()->json([
+            'tags' => $tempBook,
+            'status' => true
+        ]);
     }
 
 }
