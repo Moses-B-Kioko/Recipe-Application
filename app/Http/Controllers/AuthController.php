@@ -27,27 +27,27 @@ class AuthController extends Controller
             'password' => 'required|min:5|confirmed'
         ]);
 
-        if ($validator->fails()) {
+        if ($validator->passes()) {
+            // Create new user
+            $user = new User;
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->phone = $request->phone;
+            $user->password = Hash::make($request->password);
+            $user->save();
+        
+            session()->flash('success', 'You have been registered successfully.');
+        
+            return response()->json([
+                'status' => true
+            ]);
+        } else {
             return response()->json([
                 'status' => false,
                 'errors' => $validator->errors()
             ]);
         }
-
-        // Create new user
-        $user = new User;
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->phone = $request->phone;
-        $user->password = Hash::make($request->password);
-        $user->save();
-
-        // Flash a success message
-        session()->flash('success', 'You have been registered successfully.');
-
-        return response()->json([
-            'status' => true
-        ]);
+        
     }
 
     public function authenticate(Request $request) {
@@ -60,11 +60,18 @@ class AuthController extends Controller
 
             if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))) {
                 $user = Auth::user(); // You don't need to use a guard again if Auth::attempt succeeded
+
+                if(session()->has('url.intended')) {
+                    return redirect(session()->get('url.intended'));
+                }
                 
                 if ($user->role == 1) {
                     // Redirect to books for authorized user
                     return redirect()->route('books.create'); 
-                } else {
+                } else if($user->role == 3) {
+                    return redirect()->route('account.profile'); 
+                }
+                 else {
                     // Log out unauthorized users
                     Auth::logout();
                     return redirect()->route('account.login')->with('error', 'You are not authorized to access this panel.');
@@ -85,10 +92,10 @@ class AuthController extends Controller
 
 
     public function profile() {
-        $data = [];
-        $genres = Category::orderBy('name', 'ASC')->get();
-        $data['categories'] = $genres; // Correct assignment
-        return view('front.account.profile', $data);
+        //$data = [];
+        //$genres = Category::orderBy('name', 'ASC')->get();
+        //$data['categories'] = $genres; // Correct assignment
+        return view('front.account.profile');
     }
 
     public function index(Request $request) {

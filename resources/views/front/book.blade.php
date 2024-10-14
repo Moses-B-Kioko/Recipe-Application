@@ -107,7 +107,7 @@
                         <div class="product-image position-relative">
 
 
-                            <a href="" class="product-img">
+                            <a href="{{route('front.book',$book->slug)}}" class="product-img">
                                 @if (!empty($bookImage->image))  
                                 <img class="card-img-top" src="{{ asset('./uploads/book/small/'.$bookImage->image)}}" >
                                 @else 
