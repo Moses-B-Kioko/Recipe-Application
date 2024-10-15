@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use App\Models\Book;
+use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\County;
 use App\Models\SubCounty;
 use App\Models\Towns;
@@ -148,6 +150,8 @@ class CartController extends Controller
             return redirect()->route('account.login');
         }
 
+        $customerAddress = CustomerAddress::where('user_id',Auth::user()->id)->first();
+
         session()->forget('url.intended');
 
         $counties = County::orderBy('name', 'ASC')->get(); // Make sure the model also references the correct table
@@ -159,6 +163,7 @@ class CartController extends Controller
             'counties' => $counties,
             'sub_counties' => $sub_counties,
             'towns' => $towns,
+            'customerAddress' => $customerAddress
         ]);
 
 
@@ -173,11 +178,11 @@ class CartController extends Controller
             'first_name' => 'required|min:5',
             'last_name' => 'required',
             'email' => 'required',
-            'county' => 'required',
-            'sub_county' => 'required',
-            'town' => 'required',
+            'county_id' => 'required',
+            'sub_county_id' => 'required',
+            'town_id' => 'required',
             'mobile' => 'required',
-            'address' => 'required|min:30',
+            'address' => 'required|min:5',
         ]);
 
         if($validator->fails()) {
@@ -209,6 +214,66 @@ class CartController extends Controller
                 'apartment' => $request->apartment,
             ]
         );
+
+        //Step - 3 Store data in orders table
+        if ($request->payment_method == 'cod') {
+
+            $shipping = 0;
+            $discount = 0;
+            $subTotal = Cart::subtotal(2,'.','');
+            $grandTotal = $subTotal+$shipping;
+
+
+            $order = new Order;
+            $order->subtotal = $subTotal;
+            $order->shipping = $shipping;
+            $order->grand_total = $grandTotal;
+            $order->user_id = $user->id;
+            $order->first_name = $request->first_name;
+            $order->last_name = $request->last_name;
+            $order->email = $request->email;
+            $order->mobile = $request->mobile;
+            $order->county_id = $request->county_id;
+            $order->sub_county_id = $request->sub_county_id;
+            $order->town_id = $request->town_id;
+            $order->address = $request->address;
+            $order->apartment = $request->apartment;
+            $order->notes = $request->order_notes;
+            $order->save();
+
+            //Step - 4 store order items in order itrems table
+            
+            foreach (Cart::content() as $item) {
+                $orderItem = new OrderItem;
+                $orderItem->book_id = $item->id;
+                $orderItem->order_id = $order->id;
+                $orderItem->name = $item->name;
+                $orderItem->qty = $item->qty;
+                $orderItem->price = $item->price;
+                $orderItem->total = $item->price*$item->qty;
+                $orderItem->save();
+
+            }
+
+            session()->flash('success', 'You have successfully placed your order.');
+
+            Cart::destroy();
+
+            return response()->json([
+                'message' => 'Order saved successfully.',
+                'orderId' => $order->id,
+                'status' => true,
+            ]);
+
+        } else {
+            //
+        }
+    }
+
+    public function thankyou($id) {
+        return view('front.thanks',[
+            'id' => $id
+        ]);
     }
 }
 

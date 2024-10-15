@@ -12,6 +12,7 @@ use App\Http\Controllers\admin\TempImagesController;
 use App\Http\Controllers\admin\SubGenreController; 
 use App\Http\Controllers\FrontController; 
 use App\Http\Controllers\BookController; 
+use App\Http\Controllers\ShippingController; 
 use App\Http\Controllers\BookImageController; 
 use App\Http\Controllers\BookSubGenreController; 
 use App\Http\Controllers\AuthController;
@@ -44,7 +45,7 @@ Route::post('/update-cart',[CartController::class,'updateCart'])->name('front.up
 Route::post('/delete-item',[CartController::class,'deleteItem'])->name('front.deleteItem.cart');
 Route::get('/checkout',[CartController::class,'checkout'])->name('front.checkout');
 Route::post('/process-checkout',[CartController::class,'processCheckout'])->name('front.processCheckout');
-
+Route::get('/thanks/{orderId}',[CartController::class,'thankyou'])->name('front.thankyou');
 
 //Route::get('/login',[AuthController::class,'login'])->name('account.login');
 
@@ -66,6 +67,12 @@ Route::group(['prefix' => 'account'], function () {
 
     });
 });
+
+// Route for authenticated users to upload temporary images (admin and sellers)
+Route::group(['middleware' => 'auth'], function () {
+    Route::post('upload-temp-image', [TempImagesController::class, 'create'])->name('temp-images.create');
+});
+
          //Book Routes
          Route::get('/books',[BookController::class,'index'])->name('books.index');
          Route::get('/books/create', [BookController::class, 'create'])->name('books.create');
@@ -77,6 +84,11 @@ Route::group(['prefix' => 'account'], function () {
          Route::delete('/book-images',[BookImageController::class,'destroy'])->name('book-images.destroy');
          Route::delete('/books/{book}',[BookController::class,'destroy'])->name('books.delete');
          Route::get('/get-books',[BookController::class,'getBooks'])->name('books.getBooks');
+
+         //Shipping Routes
+         Route::get('/shipping/create',[ShippingController::class,'create'])->name('shipping.create');
+         Route::post('/shipping',[ShippingController::class,'store'])->name('shipping.store');
+
 
 
 
@@ -131,21 +143,25 @@ Route::group(['prefix' => 'admin'], function () {
         Route::delete('/sub-genre/{subgenre}', [SubGenreController::class, 'destroy'])->name('sub-genre.delete');
 
 
-        //temp-images.create
-        Route::post('upload-temp-image', [TempImagesController::class, 'create'])->name('temp-images.create');
+        
 
 
 
-       Route::get('/getSlug',function(Request $request){
-            $slug = '';
-            if(!empty($request->title)) {
-                $slug = Str::slug($request->title);
-            }
-            return response()->json([
-              'status' => true,
-              'slug' => $slug
-            ]);
-        })->name('getSlug'); 
+        
 
     });
 });
+
+//temp-images.create
+Route::post('upload-temp-image', [TempImagesController::class, 'create'])->name('temp-images.create');
+
+Route::get('/getSlug',function(Request $request){
+    $slug = '';
+    if(!empty($request->title)) {
+        $slug = Str::slug($request->title);
+    }
+    return response()->json([
+      'status' => true,
+      'slug' => $slug
+    ]);
+})->name('getSlug');

@@ -30,7 +30,7 @@ return new class extends Migration
             $table->string('town_id')->constrained()->onDelete('cascade');
             $table->text('address');
             $table->string('apartment')->nullable();
-            $table->text('notes');
+            $table->text('notes')->nullable();
 
             $table->timestamps();
         });

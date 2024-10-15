@@ -28,31 +28,31 @@
                                 
                                 <div class="col-md-12">
                                     <div class="mb-3">
-                                        <input type="text" name="first_name" id="first_name" class="form-control" placeholder="First Name">
+                                        <input type="text" name="first_name" id="first_name" class="form-control" placeholder="First Name" value="{{ (!empty( $customerAdress)) ? $customerAdress->first_name : '' }}">
                                         <p></p>
                                     </div>            
                                 </div>
                                 <div class="col-md-12">
                                     <div class="mb-3">
-                                        <input type="text" name="last_name" id="last_name" class="form-control" placeholder="Last Name">
+                                        <input type="text" name="last_name" id="last_name" class="form-control" placeholder="Last Name" value="{{ (!empty( $customerAdress)) ? $customerAdress->last_name : '' }}">
                                         <p></p>
                                     </div>            
                                 </div>
                                 
                                 <div class="col-md-12">
                                     <div class="mb-3">
-                                        <input type="text" name="email" id="email" class="form-control" placeholder="Email">
+                                        <input type="text" name="email" id="email" class="form-control" placeholder="Email" value="{{ (!empty( $customerAdress)) ? $customerAdress->email : '' }}">
                                         <p></p>
                                     </div>            
                                 </div>
 
                                 <div class="col-md-12">
                                     <div class="mb-3">
-                                        <select name="county" id="county" class="form-control">
-                                            <option value="">Select a Country</option>
+                                        <select name="county_id" id="county" class="form-control">
+                                            <option value="">Select a County</option>
                                             @if ($counties->isNotEmpty())
                                             @foreach ( $counties as $county )
-                                                  <option value="{{ $county->id }}">{{ $county->name}}</option>
+                                                  <option {{ (!empty( $customerAdress) && $customerAdress->county_id == $county->id) ? 'selected' : '' }} value="{{ $county->id }}">{{ $county->name}}</option>
                                             @endforeach
 
                                             @endif
@@ -63,11 +63,11 @@
 
                                 <div class="col-md-12">
                                     <div class="mb-3">
-                                        <select name="sub_county" id="sub_county" class="form-control">
-                                            <option value="">Select a Sub Country</option>
+                                        <select name="sub_county_id" id="sub_county" class="form-control">
+                                            <option value="">Select a Sub County</option>
                                             @if ($sub_counties->isNotEmpty())
                                             @foreach ( $sub_counties as $sub_county )
-                                                  <option value="{{ $sub_county->id }}">{{ $sub_county->name}}</option>
+                                                  <option {{ (!empty( $customerAdress) && $customerAdress->sub_county_id == $sub_county->id) ? 'selected' : '' }} value="{{ $sub_county->id }}">{{ $sub_county->name}}</option>
                                             @endforeach
 
                                             @endif
@@ -78,11 +78,11 @@
 
                                 <div class="col-md-12">
                                     <div class="mb-3">
-                                        <select name="town" id="town" class="form-control">
+                                        <select name="town_id" id="town" class="form-control">
                                             <option value="">Select a Town</option>
                                             @if ($towns->isNotEmpty())
                                             @foreach ( $towns as $town )
-                                                  <option value="{{ $town->id }}">{{ $town->name}}</option>
+                                                  <option {{ (!empty( $customerAdress) && $customerAdress->town_id == $town->id) ? 'selected' : '' }} value="{{ $town->id }}">{{ $town->name}}</option>
                                             @endforeach
 
                                             @endif
@@ -93,14 +93,14 @@
 
                                 <div class="col-md-12">
                                     <div class="mb-3">
-                                        <textarea name="address" id="address" cols="30" rows="3" placeholder="Address" class="form-control"></textarea>
+                                        <textarea name="address" id="address" cols="30" rows="3" placeholder="Address" class="form-control">{{ (!empty($customerAdress)) ? $customerAdress->address : '' }}</textarea>
                                         <p></p>
                                     </div>            
                                 </div>
 
                                 <div class="col-md-12">
                                     <div class="mb-3">
-                                        <input type="text" name="apartment" id="apartment" class="form-control" placeholder="Apartment, suite, unit, etc. (optional)">
+                                        <input type="text" name="apartment" id="apartment" class="form-control" placeholder="Apartment, suite, unit, etc. (optional)" value="{{ (!empty($customerAdress)) ? $customerAdress->apartment : '' }}">
                                     </div>            
                                 </div>
 
@@ -124,7 +124,7 @@
 
                                 <div class="col-md-12">
                                     <div class="mb-3">
-                                        <input type="text" name="mobile" id="mobile" class="form-control" placeholder="Mobile No.">
+                                        <input type="text" name="mobile" id="mobile" class="form-control" placeholder="Mobile No." value="{{ (!empty($customerAdress)) ? $customerAdress->mobile : '' }}">
                                         <p></p>
                                     </div>            
                                 </div>
@@ -175,7 +175,7 @@
                     <h3 class="card-title h5 mb-3">Payment Method</h3>
                     <div class="">
                         <input checked type="radio" name="payment_method" value="cod" id="payment_method_one">
-                        <label for="payment_method_one" class="form-check-label">COD</label>
+                        <label for="payment_method_one" class="form-check-label">Cash on Delivery</label>
                     </div>
 
                     <div class="">
@@ -244,6 +244,8 @@
     $("#orderForm").submit(function(event){
         event.preventDefault();
 
+        $('button[type="submit"]').prop('disabled',true);
+
         $.ajax({
             url:'{{ route("front.processCheckout" )}}',
             type: 'post',
@@ -251,8 +253,11 @@
             dataType: 'json',
             success: function(response){
                 var errors = response.errors;
+                $('button[type="submit"]').prop('disabled',false);
+                // front.thankyou
 
-                if (errors.first_name) {
+                if (response.status == false ) {
+                    if (errors.first_name) {
                     $("#first_name").addClass('is-invalid')
                     .siblings("p")
                     .addClass('invalid-feedback')
@@ -347,6 +352,11 @@
                     .removeClass('invalid-feedback')
                     .html('');
                 }
+                } else {
+                    window.location.href="{{url('/thanks/')}}/"+response.orderId;
+                }
+
+                
                 
             }
         });
