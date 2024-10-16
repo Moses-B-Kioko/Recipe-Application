@@ -11,6 +11,7 @@ use App\Models\County;
 use App\Models\SubCounty;
 use App\Models\Towns;
 use App\Models\CustomerAddress;
+use App\Models\ShippingCharge;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -135,40 +136,65 @@ class CartController extends Controller
         
     }
 
-    public function checkout() {
+    
 
-        //--if cart is empty redirect to cart page
+    public function checkout() {
+        // If cart is empty redirect to cart page
         if (Cart::count() == 0) {
             return redirect()->route('front.cart');
         }
-
-        //--if user is not logged in then redirect to login page
+    
+        // If user is not logged in then redirect to login page
         if (Auth::check() == false) {
-            if(!session()->has('url.intended')) {
+            if (!session()->has('url.intended')) {
                 session(['url.intended' => url()->current()]);
             }
             return redirect()->route('account.login');
         }
-
-        $customerAddress = CustomerAddress::where('user_id',Auth::user()->id)->first();
-
+    
+        $customerAddress = CustomerAddress::where('user_id', Auth::user()->id)->first();
+    
         session()->forget('url.intended');
-
-        $counties = County::orderBy('name', 'ASC')->get(); // Make sure the model also references the correct table
+    
+        $counties = County::orderBy('name', 'ASC')->get();
         $sub_counties = SubCounty::orderBy('name', 'ASC')->get(); 
         $towns = Towns::orderBy('name', 'ASC')->get(); 
+    
+        // Calculate shipping here
+        if ($customerAddress != '') {
+            $userCounty = $customerAddress->county_id;
+            $shippingInfo = ShippingCharge::where('county_id', $userCounty)->first();
+            //dd($userCounty); // Check the value of $userCounty
+    
+            //echo $shippingInfo->amount;
+            $totalQty = 0;
+            $totalShippingCharge = 0;
+            $grandTotal = 0;
+            foreach (Cart::content() as $item) {
+                $totalQty += $item->qty;
+            }
+    
+            $totalShippingCharge = $totalQty*$shippingInfo->amount;
+    
+            $grandTotal = Cart::subtotal(2,'.','')+$totalShippingCharge;
+        } else {
+            $grandTotal = Cart::subtotal(2,'.','');
+            $totalShippingCharge = 0;
 
+        }
+        
 
-        return view('front.checkout',[
+    
+        return view('front.checkout', [
             'counties' => $counties,
             'sub_counties' => $sub_counties,
             'towns' => $towns,
-            'customerAddress' => $customerAddress
+            'customerAddress' => $customerAddress,
+            'totalShippingCharge' => $totalShippingCharge,
+            'grandTotal' => $grandTotal
         ]);
-
-
-        
     }
+    
 
     public function processCheckout(Request $request) {
 
@@ -223,6 +249,22 @@ class CartController extends Controller
             $subTotal = Cart::subtotal(2,'.','');
             $grandTotal = $subTotal+$shipping;
 
+            //Calculate Shipping
+            $shippingInfo = ShippingCharge::where('county_id', $request->county_id)->first();
+
+            $totalQty = 0;
+        foreach (Cart::content() as $item) {
+            $totalQty += $item->qty;
+        }
+
+            if ($shippingInfo != null) {
+                $shipping = $totalQty*$shippingInfo->amount;
+                $grandTotal= $subTotal+$shipping;
+            } else {
+                $shippingInfo = ShippingCharge::where('county_id', 'rest_of_world')->first();
+                $shipping = $totalQty*$shippingInfo->amount;
+                $grandTotal= $subTotal+$shipping;
+            }
 
             $order = new Order;
             $order->subtotal = $subTotal;
@@ -274,6 +316,50 @@ class CartController extends Controller
         return view('front.thanks',[
             'id' => $id
         ]);
+    }
+
+    public function getOrderSummery(Request $request) {
+        $subTotal = Cart::subtotal(2,'.','');
+
+        if ($request->county_id > 0) {
+
+            $shippingInfo = ShippingCharge::where('county_id', $request->county_id)->first();
+
+            $totalQty = 0;
+        foreach (Cart::content() as $item) {
+            $totalQty += $item->qty;
+        }
+
+            if ($shippingInfo != null) {
+                $shippingCharge = $totalQty*$shippingInfo->amount;
+
+                $grandTotal= $subTotal+$shippingCharge;
+
+                return response()->json([
+                    'status' => true,
+                    'grandTotal' => number_format($grandTotal,2),
+                    'shippingCharge' => number_format($shippingCharge,2),
+                ]);
+            } else {
+                $shippingInfo = ShippingCharge::where('county_id', 'rest_of_world')->first();
+
+                $shippingCharge = $totalQty*$shippingInfo->amount;
+
+                $grandTotal= $subTotal+$shippingCharge;
+
+                return response()->json([
+                    'status' => true,
+                    'grandTotal' => number_format($grandTotal,2),
+                    'shippingCharge' => number_format($shippingCharge,2),
+                ]);
+            }
+        } else {
+            return response()->json([
+                'status' => true,
+                'grandTotal' => number_format($subTotal,2),
+                'shippingCharge' => number_format(0,2),
+            ]);
+        }
     }
 }
 

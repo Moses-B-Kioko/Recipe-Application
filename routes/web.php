@@ -46,6 +46,7 @@ Route::post('/delete-item',[CartController::class,'deleteItem'])->name('front.de
 Route::get('/checkout',[CartController::class,'checkout'])->name('front.checkout');
 Route::post('/process-checkout',[CartController::class,'processCheckout'])->name('front.processCheckout');
 Route::get('/thanks/{orderId}',[CartController::class,'thankyou'])->name('front.thankyou');
+Route::post('/get-order-summery',[CartController::class,'getOrderSummery'])->name('front.getOrderSummery');
 
 //Route::get('/login',[AuthController::class,'login'])->name('account.login');
 
@@ -61,6 +62,7 @@ Route::group(['prefix' => 'account'], function () {
 
     Route::group(['middleware' => 'auth'], function() {
         Route::get('/profile', [AuthController::class, 'profile'])->name('account.profile');
+        Route::get('/my-orders', [AuthController::class, 'orders'])->name('account.orders');
         Route::post('/books',[BookController::class,'store'])->name('books.store');
         Route::get('/product', [AuthController::class, 'product'])->name('account.product');
         Route::get('/logout',[AuthController::class,'logout'])->name('account.logout');
@@ -88,6 +90,9 @@ Route::group(['middleware' => 'auth'], function () {
          //Shipping Routes
          Route::get('/shipping/create',[ShippingController::class,'create'])->name('shipping.create');
          Route::post('/shipping',[ShippingController::class,'store'])->name('shipping.store');
+         Route::get('/shipping/{id}',[ShippingController::class,'edit'])->name('shipping.edit');
+         Route::put('/shipping/{id}',[ShippingController::class,'update'])->name('shipping.update');
+         Route::delete('/shipping/{id}',[ShippingController::class,'destroy'])->name('shipping.delete');
 
 
 

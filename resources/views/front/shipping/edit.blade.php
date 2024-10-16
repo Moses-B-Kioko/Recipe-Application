@@ -39,7 +39,7 @@
                 @include('admin.message')
                 <form action="" method="post" name="shippingForm" id="shippingForm">
                 @csrf   
-                <div class="container-fluid">
+                     <div class="container-fluid">
                             <div class="row">
                                 <div class="col-md-12">
                                     <!-- Main Product Creation Form -->
@@ -52,9 +52,9 @@
                                                         <option value="">Select a County</option>
                                                         @if ($counties->isNotEmpty())
                                                             @foreach ($counties as $county)
-                                                            <option value="{{ $county->id }}">{{ $county->name }}</option>
+                                                            <option {{ ($shippingCharge->county_id == $county->id) ? 'selected' : '' }} value="{{ $county->id }}">{{ $county->name }}</option>
                                                             @endforeach
-                                                            <option value="rest_of_world">Rest of the world</option>
+                                                            <option {{ ($shippingCharge->county_id == 'rest_of_world') ? 'selected' : '' }} value="rest_of_world">Rest of the world</option>
                                                         @endif
                                                         </select>
                                                         <p class="error"></p>
@@ -62,49 +62,19 @@
                                                 </div>
                                                 <div class="col-md-4">
                                                    <div class="mb-3">
-                                                    <input type="text" name="amount" id="amount" class="form-control" placeholder="Amount">
+                                                    <input value="{{ $shippingCharge->amount}}" type="text" name="amount" id="amount" class="form-control" placeholder="Amount">
                                                     <p></p>
                                                    </div>
                                                 </div>
                                                 <div class="col-md-4">
                                                      <div class="mb-3">
-                                                <button type="submit" class="btn btn-primary">Create</button>
+                                                <button type="submit" class="btn btn-primary">Update</button>
                                                      </div>
                                                 </div>                  
-                            </div>
-                        </div>
+                                             </div>
+                                     </div>
                     </form>
-                    <div class="card mb-3">
-                                        <div class="card-body">								
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <table class="table table-striped">
-                                                        <tr>
-                                                        <th>ID</th>
-                                                        <th>Name</th>
-                                                        <th>Amount</th>
-                                                        <th>Action</th>
-                                                        </tr>
-                                                        @if($shippingCharges->isNotEmpty())
-                                                        @foreach ($shippingCharges as $shippingCharge) 
-                                                        <tr>
-                                                        <td>{{$shippingCharge->id}}</td>
-
-                                                        <td>{{($shippingCharge->county_id == 'rest_of_world') ? 'Rest of the World' : $shippingCharge->name}}</td>
-
-                                                        <td>Ksh.{{$shippingCharge->amount}}</td>
-                                                        <td>
-                                                            <a href="{{ route('shipping.edit',$shippingCharge->id )}}" class="btn btn-primary">Edit</a>
-                                                            <a href="javascript:void(0);" onclick="deleteRecord({{$shippingCharge->id}});" class="btn btn-danger">Delete</a>
-                                                        </td>
-                                                        </tr>
-                                                        @endforeach
-                                                        @endif
-                                                    </table>
-                                                </div>
-                                            </div>
-                                         </div>
-                       </div>
+                    
                 </section>
             </div>
         </div>
@@ -122,8 +92,8 @@ $("#shippingForm").submit(function(event){
     $("button[type=submit]").prop('disabled', true);
 
     $.ajax({
-        url: '{{ route("shipping.store")}}',
-        type: 'post',
+        url: '{{ route("shipping.update",$shippingCharge->id)}}',
+        type: 'put',
         data: element.serializeArray(),
         dataType: 'json',
         success: function(response){
@@ -316,28 +286,6 @@ const dropzone = $("#image").dropzone({
 function deleteImage(id) {
     $("#image-row-" + id).remove();  // Include the hyphen to match the id
 }
-
-function deleteRecord(id){
-		var url = '{{ route("shipping.delete", "ID") }}';
-		var newUrl = url.replace("ID", id)
-		
-		if (confirm("Are you sure you want to delete")){
-			$.ajax({
-				url: newUrl,
-				type: 'delete',
-				data: {},
-				dataType: 'json',
-				headers: {
-					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-				},
-				success: function(response) {
-					if(response["status"]){
-						window.location.href="{{ route('shipping.create')}}"
-					}
-				}
-		});
-		}
-	}
 
         </script>
         

@@ -115,7 +115,7 @@
                                                     <div class="mb-3">
                                                         <label for="sub_category">Sub Genre</label>
                                                         <select name="sub_category" id="sub_category" class="form-control">
-                                                        <option value="Electronics">Select a Sub Genre</option>
+                                                        <option value="">Select a Sub Genre</option>
                                                         @if ($subGenres->isNotEmpty())
                                                                 @foreach ($subGenres as $subGenre)
                                                                 <option {{ ($book->sub_category_id == $subGenre->id) ? 'selected' : '' }} value="{{$subGenre->id}}">{{$subGenre->name}}</option>
