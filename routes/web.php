@@ -18,6 +18,7 @@ use App\Http\Controllers\BookSubGenreController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController; 
 use Illuminate\Http\Request;
 
 /*
@@ -35,6 +36,10 @@ use Illuminate\Http\Request;
 // Define a route for the root URL ('/'). When accessed, it returns the 'welcome' view.
 //Route::get('/', function () {
  //   return view('welcome');
+//});
+
+//Route::get('/test', function () {
+  //  orderEmail(10);
 //});
 Route::get('/',[FrontController::class,'index'])->name('front.home');
 Route::get('/shop/{categorySlug?}/{subGenreSlug?}',[ShopController::class,'index'])->name('front.shop');
@@ -62,7 +67,9 @@ Route::group(['prefix' => 'account'], function () {
 
     Route::group(['middleware' => 'auth'], function() {
         Route::get('/profile', [AuthController::class, 'profile'])->name('account.profile');
+        Route::get('/sellerProfile', [AuthController::class, 'sellerProfile'])->name('account.sellerProfile');
         Route::get('/my-orders', [AuthController::class, 'orders'])->name('account.orders');
+        Route::get('/order-detail/{orderId}', [AuthController::class, 'orderDetails'])->name('account.orderDetails');
         Route::post('/books',[BookController::class,'store'])->name('books.store');
         Route::get('/product', [AuthController::class, 'product'])->name('account.product');
         Route::get('/logout',[AuthController::class,'logout'])->name('account.logout');
@@ -156,6 +163,12 @@ Route::group(['prefix' => 'admin'], function () {
 
     });
 });
+
+//Order Routes
+Route::get('/orders',[OrderController::class,'index'])->name('orders.index');
+Route::get('/orders/{id}',[OrderController::class,'detail'])->name('orders.detail');
+Route::post('/order/change-status/{id}',[OrderController::class,'changeOrderStatusForm'])->name('orders.changeOrderStatusForm');
+Route::post('/order/send-email/{id}',[OrderController::class,'sendInvoiceEmail'])->name('orders.sendInvoiceEmail');
 
 //temp-images.create
 Route::post('upload-temp-image', [TempImagesController::class, 'create'])->name('temp-images.create');

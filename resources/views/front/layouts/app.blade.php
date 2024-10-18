@@ -17,6 +17,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;500&family=Raleway:ital,wght@0,400;0,600;0,800;1,200&family=Roboto+Condensed:wght@400;700&family=Roboto:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('admin-assets/plugins/summernote/summernote.min.css')}}">
     <link rel="stylesheet" href="{{ asset('admin-assets/plugins/select2/css/select2.min.css')}}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css">
+
 
 
     <!-- Fav Icon -->
@@ -34,7 +36,11 @@
                 </a>
             </div>
             <div class="col-lg-6 col-6 text-left  d-flex justify-content-end align-items-center">
-                <a href="{{ route('account.authenticate')}}" class="nav-link text-dark">My Account</a>
+                @if (Auth::check())
+                <a href="{{ route('account.profile')}}" class="nav-link text-dark">My Account</a>
+                @else
+                <a href="{{ route('account.login')}}" class="nav-link text-dark">Login/Register</a>
+                @endif
                 <form action="">                    
                     <div class="input-group">
                         <input type="text" placeholder="Search For Products" class="form-control" aria-label="Amount (to the nearest dollar)">
@@ -158,6 +164,10 @@
 <script src="{{ asset('admin-assets/js/demo.js')}}"></script>
 <script src="{{ asset('admin-assets/plugins/summernote/summernote.min.js')}}"></script>
 <script src="{{ asset('admin-assets/plugins/select2/js/select2.min.js')}}"></script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
 
 
 <script>

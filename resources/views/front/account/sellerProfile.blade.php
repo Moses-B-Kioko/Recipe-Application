@@ -16,7 +16,8 @@
         <div class="container  mt-5">
             <div class="row">
                 <div class="col-md-3">
-                @include('front.account.common.BuyerSidebar')                </div>
+                @include('front.account.common.sidebar')
+                </div>
                 <div class="col-md-9">
                     <div class="card">
                         <div class="card-header">

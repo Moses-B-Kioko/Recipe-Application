@@ -16,7 +16,7 @@
         <div class="container  mt-5">
             <div class="row">
                 <div class="col-md-3">
-                @include('front.account.common.sidebar')                </div>
+                @include('front.account.common.BuyerSidebar')                </div>
                 <div class="col-md-9">
                     <div class="card">
                         <div class="card-header">
@@ -38,11 +38,20 @@
                                         @foreach ($orders as $order)
                                         <tr>
                                             <td>
-                                                <a href="order-detail.php">{{$order->id}}</a>
+                                                <a href="{{ route('account.orderDetails',$order->id )}}">{{$order->id}}</a>
                                             </td>
                                             <td>{{ \Carbon\Carbon::parse($order->created_at)->format('d M, Y') }}</td>
                                             <td>
+                                                @if ($order->status == 'pending')
+                                                <span class="badge bg-danger">Pending</span>
+
+                                                @elseif ($order->status == 'shipped')
+                                                <span class="badge bg-info">Shipped</span>
+                                                @elseif ($order->status == 'delivered')
                                                 <span class="badge bg-success">Delivered</span>
+                                                @else 
+                                                <span class="badge bg-danger">Cancelled</span>
+                                                @endif 
                                                 
                                             </td>
                                             <td>Ksh.{{ number_format($order->grand_total,2) }}</td>

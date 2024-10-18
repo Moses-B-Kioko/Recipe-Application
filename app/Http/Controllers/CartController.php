@@ -163,24 +163,32 @@ class CartController extends Controller
         // Calculate shipping here
         if ($customerAddress != '') {
             $userCounty = $customerAddress->county_id;
+        
+            // Check if shippingInfo is null
             $shippingInfo = ShippingCharge::where('county_id', $userCounty)->first();
-            //dd($userCounty); // Check the value of $userCounty
-    
-            //echo $shippingInfo->amount;
-            $totalQty = 0;
-            $totalShippingCharge = 0;
-            $grandTotal = 0;
-            foreach (Cart::content() as $item) {
-                $totalQty += $item->qty;
+        
+            if ($shippingInfo) {
+                // If shippingInfo is found, proceed with the calculations
+                $totalQty = 0;
+                $totalShippingCharge = 0;
+                $grandTotal = 0;
+        
+                foreach (Cart::content() as $item) {
+                    $totalQty += $item->qty;
+                }
+        
+                $totalShippingCharge = $totalQty * $shippingInfo->amount;
+                $grandTotal = Cart::subtotal(2, '.', '') + $totalShippingCharge;
+            } else {
+                // Handle case when no shipping charge is found
+                // You can assign a default value for shipping charge or notify the user
+                $totalShippingCharge = 0;
+                $grandTotal = Cart::subtotal(2, '.', '');
+                // Optionally: Add a message for missing shipping charge
             }
-    
-            $totalShippingCharge = $totalQty*$shippingInfo->amount;
-    
-            $grandTotal = Cart::subtotal(2,'.','')+$totalShippingCharge;
         } else {
-            $grandTotal = Cart::subtotal(2,'.','');
+            $grandTotal = Cart::subtotal(2, '.', '');
             $totalShippingCharge = 0;
-
         }
         
 
@@ -270,6 +278,8 @@ class CartController extends Controller
             $order->subtotal = $subTotal;
             $order->shipping = $shipping;
             $order->grand_total = $grandTotal;
+            $order->payment_status = 'not paid';
+            $order->status = 'pending';
             $order->user_id = $user->id;
             $order->first_name = $request->first_name;
             $order->last_name = $request->last_name;
@@ -296,6 +306,9 @@ class CartController extends Controller
                 $orderItem->save();
 
             }
+
+            //Send Order Email
+            orderEmail($order->id,'customer');
 
             session()->flash('success', 'You have successfully placed your order.');
 
