@@ -41,12 +41,12 @@
                 @else
                 <a href="{{ route('account.login')}}" class="nav-link text-dark">Login/Register</a>
                 @endif
-                <form action="">                    
+                <form action="{{ route('front.shop')}}">                    
                     <div class="input-group">
-                        <input type="text" placeholder="Search For Products" class="form-control" aria-label="Amount (to the nearest dollar)">
-                        <span class="input-group-text">
+                        <input value="{{Request::get('search')}}" type="text" placeholder="Search For Products" class="form-control" name="search" id="search">
+                        <button type="submit" class="input-group-text">
                             <i class="fa fa-search"></i>
-                      	</span>
+</button>
                     </div>
                 </form>
             </div>		
@@ -149,7 +149,8 @@
     </div>
 </footer>
 
-<script src="{{ asset('front-assets/js/jquery-3.6.0.min.js')}}"></script>
+<!-- Load jQuery only once -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="{{ asset('front-assets/js/bootstrap.bundle.5.1.3.min.js')}}"></script>
 <script src="{{ asset('front-assets/js/instantpages.5.1.0.min.js')}}"></script>
 <script src="{{ asset('front-assets/js/lazyload.17.6.0.min.js')}}"></script>
@@ -165,9 +166,8 @@
 <script src="{{ asset('admin-assets/plugins/summernote/summernote.min.js')}}"></script>
 <script src="{{ asset('admin-assets/plugins/select2/js/select2.min.js')}}"></script>
 
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
+
 
 
 <script>

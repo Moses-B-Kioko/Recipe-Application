@@ -19,6 +19,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController; 
+use App\Http\Controllers\admin\UserController; 
+use App\Http\Controllers\admin\DashboardController;
 use Illuminate\Http\Request;
 
 /*
@@ -132,7 +134,7 @@ Route::group(['prefix' => 'admin'], function () {
 
         // Define a route for the admin dashboard. When accessed, it calls the 'index' method of the 'HomeController'.
         // The route is named 'admin.dashboard' for easy reference in the application.
-        Route::get('/dashboard', [HomeController::class, 'index'])->name('admin.dashboard');
+        Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard.index');
         
         // Define a route for logging out the admin. When accessed, it calls the 'logout' method of the 'HomeController'.
         // The route is named 'admin.logout' for easy reference in the application.
@@ -154,8 +156,20 @@ Route::group(['prefix' => 'admin'], function () {
         Route::put('/sub-genre/{subgenre}', [SubGenreController::class, 'update'])->name('sub-genre.update');
         Route::delete('/sub-genre/{subgenre}', [SubGenreController::class, 'destroy'])->name('sub-genre.delete');
 
+        //User Routes
+        Route::get('users',[UserController::class,'index'])->name('users.index');
+        Route::get('users/create',[UserController::class,'create'])->name('users.create');
+        Route::post('users',[UserController::class,'store'])->name('users.store');
+        Route::get('users/{user}/edit',[UserController::class,'edit'])->name('users.edit');
+        Route::put('users/{user}',[UserController::class,'update'])->name('users.update');
+        Route::delete('users/{user}',[UserController::class,'destroy'])->name('users.destroy');
 
-        
+
+        //Dashboard Routes
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+
+        //Admin Orders Routes
+        Route::get('/admin-orders',[OrderController::class,'adminIndex'])->name('orders.adminIndex');
 
 
 

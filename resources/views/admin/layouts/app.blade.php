@@ -86,6 +86,8 @@
 			
 		</div>
 		<!-- ./wrapper -->
+		<!--<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
+
 		<!-- jQuery -->
 		<script src="{{ asset('admin-assets/plugins/jquery/jquery.min.js')}}"></script>
 		<!-- Bootstrap 4 -->

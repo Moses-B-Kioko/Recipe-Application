@@ -45,7 +45,7 @@ class AdminLoginController extends Controller
                 // Check if the admin has the correct role (role 2) to access the dashboard.
                 if ($admin->role == 2) {
                     // If the role is valid, redirect the admin to the dashboard.
-                    return redirect()->route('admin.dashboard');
+                    return redirect()->route('dashboard.index');
                 }else {
                     // If the role is not valid, log out the admin and redirect them to the login page
                     // with an error message indicating they are not authorized to access the admin panel.

@@ -39,6 +39,10 @@ class ShopController extends Controller
             }
 
         }
+
+        if (!empty($request->get('search'))) {
+            $books = $books->where('title','like','%'.$request->get('search').'%');  
+        }
         
         if ($request->get('sort') != '') {
             if ($request->get('sort') == 'latest') {

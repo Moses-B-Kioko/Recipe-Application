@@ -95,7 +95,8 @@ class SubGenreController extends Controller
 
         $validator = Validator::make($request->all(),[
             'name' => 'required',
-            'slug' => 'required|unique:sub_genres', // Ensure table name is correct
+            'slug' => 'required|unique:sub_genres,slug,' . $id, // Ensure table name is correct   'email' => 'required|email|unique:users,email,'.$id.',id',
+            //'slug' => 'required|unique:sub_genres', // Ensure table name is correct
             'genre' => 'required',
             'status' => 'required'
         ]);

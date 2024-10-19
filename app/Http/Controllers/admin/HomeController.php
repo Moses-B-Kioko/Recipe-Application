@@ -21,7 +21,7 @@ class HomeController extends Controller
      * with a logout link.
      */
     public function index(){
-        return view('admin.dashboard');
+        return view('dashboard.index');
         // Retrieve the currently authenticated admin user.
         //$admin = Auth::guard('admin')->user();
         
