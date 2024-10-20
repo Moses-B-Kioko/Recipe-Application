@@ -211,7 +211,7 @@ class CartController extends Controller
         $validator = Validator::make($request->all(),[
             'first_name' => 'required|min:5',
             'last_name' => 'required',
-            'email' => 'required',
+            'email' => 'required|email',
             'county_id' => 'required',
             'sub_county_id' => 'required',
             'town_id' => 'required',
@@ -305,10 +305,20 @@ class CartController extends Controller
                 $orderItem->total = $item->price*$item->qty;
                 $orderItem->save();
 
+                //Update Book Stock
+                $bookData = Book::find($item->id);
+                if ($bookData ->track_qty == 'Yes') {
+                    $currentQty = $bookData->qty;
+                    $updatedQty = $currentQty-$item->qty;
+                    $bookData->qty = $updatedQty;
+                    $bookData->save();
+                }
+               
+
             }
 
             //Send Order Email
-            orderEmail($order->id,'customer');
+            //orderEmail($order->id,'customer');
 
             session()->flash('success', 'You have successfully placed your order.');
 
@@ -350,8 +360,8 @@ class CartController extends Controller
 
                 return response()->json([
                     'status' => true,
-                    'grandTotal' => number_format($grandTotal,2),
-                    'shippingCharge' => number_format($shippingCharge,2),
+                    'grandTotal' => 'Ksh ' .number_format($grandTotal,2),
+                    'shippingCharge' => 'Ksh ' .number_format($shippingCharge,2),
                 ]);
             } else {
                 $shippingInfo = ShippingCharge::where('county_id', 'rest_of_world')->first();
@@ -362,15 +372,15 @@ class CartController extends Controller
 
                 return response()->json([
                     'status' => true,
-                    'grandTotal' => number_format($grandTotal,2),
-                    'shippingCharge' => number_format($shippingCharge,2),
+                    'grandTotal' => 'Ksh ' .number_format($grandTotal,2),
+                    'shippingCharge' => 'Ksh ' .number_format($shippingCharge,2),
                 ]);
             }
         } else {
             return response()->json([
                 'status' => true,
-                'grandTotal' => number_format($subTotal,2),
-                'shippingCharge' => number_format(0,2),
+                'grandTotal' => 'Ksh ' .number_format($subTotal,2),
+                'shippingCharge' => 'Ksh ' .number_format(0,2),
             ]);
         }
     }

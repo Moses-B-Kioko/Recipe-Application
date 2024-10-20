@@ -69,6 +69,8 @@ Route::group(['prefix' => 'account'], function () {
 
     Route::group(['middleware' => 'auth'], function() {
         Route::get('/profile', [AuthController::class, 'profile'])->name('account.profile');
+        Route::post('/update-profile', [AuthController::class, 'updateSellerProfile'])->name('account.updateSellerProfile');
+        Route::post('/update-address', [AuthController::class, 'updateAddress'])->name('account.updateAddress');
         Route::get('/sellerProfile', [AuthController::class, 'sellerProfile'])->name('account.sellerProfile');
         Route::get('/my-orders', [AuthController::class, 'orders'])->name('account.orders');
         Route::get('/order-detail/{orderId}', [AuthController::class, 'orderDetails'])->name('account.orderDetails');
@@ -170,6 +172,12 @@ Route::group(['prefix' => 'admin'], function () {
 
         //Admin Orders Routes
         Route::get('/admin-orders',[OrderController::class,'adminIndex'])->name('orders.adminIndex');
+        Route::get('/admin-orders/{id}',[OrderController::class,'adminDetail'])->name('orders.adminDetail');
+
+        //Admin Book Routes
+        Route::get('/admin-books',[BookController::class,'adminIndex'])->name('books.adminIndex');
+
+
 
 
 

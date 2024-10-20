@@ -30,6 +30,19 @@ class BookController extends Controller
         return view('front.books.list',$data);
     }
 
+    public function adminIndex (Request $request) 
+    {
+        $books = Book::latest('id')->with('book_images');
+
+        if($request->get('keyword') != "") {
+            $books = $books->where('title', 'like', '%'.$request->keyword.'%');
+        }
+        $books = $books->paginate();
+        //dd($books);
+        $data['books'] = $books;
+        return view('admin.books.list',$data);
+    }
+
     public function create() {
         $data = [];
         $categories = Category::orderBy('name','ASC')->get();

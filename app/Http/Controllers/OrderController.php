@@ -58,6 +58,21 @@ class OrderController extends Controller
         ]);
     }
 
+    public function adminDetail($orderId) {
+
+        $order = Order::select('orders.*','county.name as countyName')
+                 ->where('orders.id',$orderId)
+                  ->leftJoin('county','county.id','orders.county_id')
+                 ->first();
+
+        $orderItems = OrderItem::where('order_id',$orderId)->get();
+
+        return view('admin.orders.detail',[
+            'order' => $order,
+            'orderItems' => $orderItems
+        ]);
+    }
+
     public function changeOrderStatusForm(Request $request, $orderId) {
         $order = Order::find($orderId);
         $order->status = $request->status;

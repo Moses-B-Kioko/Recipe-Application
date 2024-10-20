@@ -6,10 +6,10 @@
 					<div class="container-fluid my-2">
 						<div class="row mb-2">
 							<div class="col-sm-6">
-								<h1>Sub Genre</h1>
+								<h1>Sub Category</h1>
 							</div>
 							<div class="col-sm-6 text-right">
-								<a href="{{ route('sub-genre.create')}}" class="btn btn-primary">New Sub Genre</a>
+								<a href="{{ route('sub-genre.create')}}" class="btn btn-primary">New Sub Category</a>
 							</div>
 						</div>
 					</div>
@@ -47,7 +47,7 @@
 										<th width="60">ID</th>
 										<th style="padding-left: 30px;">Name</th> <!-- Increased padding for Name column -->
 										<th style="padding-left: 30px;">Slug</th>
-										<th>Genre</th>
+										<th>Category</th>
 										<th width="100">Status</th>
 										<th width="100">Action</th>
 									</tr>

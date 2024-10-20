@@ -118,7 +118,7 @@
                                                         <option value="">Select a Sub Genre</option>
                                                         @if ($subGenres->isNotEmpty())
                                                                 @foreach ($subGenres as $subGenre)
-                                                                <option {{ ($book->sub_category_id == $subGenre->id) ? 'selected' : '' }} value="{{$subGenre->id}}">{{$subGenre->name}}</option>
+                                                                <option {{ ($book->sub_genre_id == $subGenre->id) ? 'selected' : '' }} value="{{$subGenre->id}}">{{$subGenre->name}}</option>
                                                                 @endforeach
                                                            @endif
                                                         </select>

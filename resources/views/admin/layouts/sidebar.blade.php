@@ -20,13 +20,13 @@
 							<li class="nav-item">
 								<a href="{{ route('categories.index') }}" class="nav-link">
 									<i class="nav-icon fas fa-file-alt"></i>
-									<p>Genre</p>
+									<p>Category</p>
 								</a>
 							</li>
 							<li class="nav-item">
 								<a href="{{ route('sub-genre.index')}}" class="nav-link">
 									<i class="nav-icon fas fa-file-alt"></i>
-									<p>Sub Genre</p>
+									<p>Sub Category</p>
 								</a>
 							</li>
 							<!--<li class="nav-item">
@@ -38,7 +38,7 @@
 								</a>
 							</li> -->
 							<li class="nav-item">
-								<a href="#" class="nav-link">
+								<a href="{{ route('books.adminIndex')}}" class="nav-link">
 									<i class="nav-icon fas fa-tag"></i>
 									<p>Books</p>
 								</a>

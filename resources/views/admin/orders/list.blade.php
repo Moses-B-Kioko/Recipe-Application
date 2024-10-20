@@ -38,7 +38,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6 text-right">
-                                        <div class="card-tools">
+                                        <div class="card-tools d-flex justify-content-end">
                                             <div class="input-group" style="width: 300px;"> <!-- Increased width of search input -->
                                                 <input value="{{ Request::get('keyword') }}" type="text" name="keyword" class="form-control float-right" placeholder="Search">
                                                 <div class="input-group-append">
@@ -69,7 +69,7 @@
                                     @if ($orders->isNotEmpty())
                                         @foreach($orders as $order)
                                             <tr>
-                                                <td><a href="{{ route('orders.detail', [$order->id, 1]) }}">{{ $order->id }}</a></td>
+                                                <td><a href="{{ route('orders.adminDetail', [$order->id, 1]) }}">{{ $order->id }}</a></td>
                                                 <td>{{ $order->name }}</td>
                                                 <td>{{ $order->email }}</td>
                                                 <td>{{ $order->mobile }}</td>

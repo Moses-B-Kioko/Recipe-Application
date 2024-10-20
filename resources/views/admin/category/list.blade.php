@@ -6,10 +6,10 @@
 					<div class="container-fluid my-2">
 						<div class="row mb-2">
 							<div class="col-sm-6">
-								<h1>Genre</h1>
+								<h1>Category</h1>
 							</div>
 							<div class="col-sm-6 text-right">
-								<a href="{{ route('categories.create')}}" class="btn btn-primary">New Genre</a>
+								<a href="{{ route('categories.create')}}" class="btn btn-primary">New Category</a>
 							</div>
 						</div>
 					</div>

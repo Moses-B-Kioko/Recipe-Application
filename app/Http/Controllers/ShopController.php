@@ -79,7 +79,7 @@ class ShopController extends Controller
         // Fetch related books
         if($book->related_books != '') {
             $bookArray = explode(',',$book->related_books);
-            $relatedBooks = Book::whereIn('id',$bookArray)->get();
+            $relatedBooks = Book::whereIn('id',$bookArray)->where('status',1)->get();
         }
 
         $data['book'] = $book;

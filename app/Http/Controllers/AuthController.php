@@ -6,6 +6,10 @@ use App\Models\User;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\County;
+use App\Models\SubCounty;
+use App\Models\towns;
+use App\Models\CustomerAddress;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -104,8 +108,103 @@ class AuthController extends Controller
         //$data = [];
         //$genres = Category::orderBy('name', 'ASC')->get();
         //$data['categories'] = $genres; // Correct assignment
-        return view('front.account.sellerProfile');
+        $userId= Auth::user()->id;
+
+        $counties = County::orderBy('name','ASC')->get();
+        $sub_counties = SubCounty::orderBy('name','ASC')->get();
+        $towns = Towns::orderBy('name','ASC')->get();
+
+        $user = User::where('id',$userId)->first();
+
+        $address = CustomerAddress::where('user_id',$userId)->first();
+        return view('front.account.sellerProfile',[
+            'user' => $user,
+            'counties' => $counties,
+            'address' => $address,
+            'sub_counties' => $sub_counties,
+            'towns' => $towns
+        ]);
     }
+
+    public function updateSellerProfile(Request $request) {
+        $userId = Auth::user()->id;
+        $validator = Validator::make($request->all(),[
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email,except,id',
+            'phone' => 'required'
+        ]);
+
+        if ($validator->passes()) {
+            $user = User::find($userId);
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->phone = $request->phone;
+            $user->save();
+
+            session()->flash('success','Profile Updated Successfully');
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Profile Updated Successfully.'
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors()
+            ]);
+        }
+    }
+
+    public function updateAddress(Request $request) {
+        $userId = Auth::user()->id;
+        $validator = Validator::make($request->all(),[
+            'first_name' => 'required|min:5',
+            'last_name' => 'required',
+            'email' => 'required|email',
+            'county_id' => 'required',
+            'sub_county_id' => 'required',
+            'town_id' => 'required',
+            'mobile' => 'required',
+            'address' => 'required|min:5',
+        ]);
+
+        if ($validator->passes()) {
+            /*$user = User::find($userId);
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->phone = $request->phone;
+            $user->save(); */
+
+            CustomerAddress::updateOrCreate(
+                ['user_id' => $userId],
+                [
+                    'user_id' => $userId,
+                    'first_name' => $request->first_name,
+                    'last_name' => $request->last_name,
+                    'email' => $request->email,
+                    'mobile' => $request->mobile,
+                    'county_id' => $request->county_id,
+                    'sub_county_id' => $request->sub_county_id,
+                    'town_id' => $request->town_id,
+                    'address' => $request->address,
+                    'apartment' => $request->apartment,
+                ]
+            );
+
+            session()->flash('success','Address Updated Successfully');
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Profile Updated Successfully.'
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors()
+            ]);
+        }
+    }
+
 
     public function index(Request $request) {
         

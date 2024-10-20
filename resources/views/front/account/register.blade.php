@@ -50,7 +50,7 @@
 </section>
 @endsection
 
-@section('customJs')
+@section('scripts')
 
 <script type="text/javascript">
 

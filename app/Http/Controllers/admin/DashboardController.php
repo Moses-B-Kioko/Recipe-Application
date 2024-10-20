@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\County;
 use App\Models\ShippingCharge;
+use App\Models\User;
 
 
 
@@ -58,6 +59,19 @@ class DashboardController extends Controller
      $countyLabels = $shippingCosts->pluck('name');
      $countyValues = $shippingCosts->pluck('avg_shipping_cost');
 
-        return view('admin.dashboard', compact('labels', 'values', 'bookLabels', 'bookValues', 'categoryLabels', 'categoryValues', 'countyLabels', 'countyValues'));
+     $totalSales = Order::sum('grand_total');
+     $totalOrders = Order::count();
+     $totalUsers = User::count();
+     $bestCategory = OrderItem::join('books', 'order_items.book_id', '=', 'books.id')
+    ->join('categories', 'books.category_id', '=', 'categories.id')
+    ->select('categories.name', DB::raw('SUM(order_items.qty) as total_sales'))
+    ->groupBy('categories.name')
+    ->orderBy('total_sales', 'DESC')
+    ->first(); // Get the top category only
+
+//echo $bestCategory->name; // Output only the category name
+
+
+        return view('admin.dashboard', compact('labels', 'values', 'bookLabels', 'bookValues', 'categoryLabels', 'categoryValues', 'countyLabels', 'countyValues','totalSales','totalOrders','bestCategory','totalUsers'));
     }
 }

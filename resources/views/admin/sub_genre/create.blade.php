@@ -6,7 +6,7 @@
 					<div class="container-fluid my-2">
 						<div class="row mb-2">
 							<div class="col-sm-6">
-								<h1>Create Sub Genre</h1>
+								<h1>Create Sub Category</h1>
 							</div>
 							<div class="col-sm-6 text-right">
 								<a href="{{ route('sub-genre.index')}}" class="btn btn-primary">Back</a>
@@ -25,9 +25,9 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="mb-3">
-                                                <label for="name">Genre</label>
+                                                <label for="name">Category</label>
                                                 <select name="genre" id="genre" class="form-control">
-                                                    <option value="">Select a genre</option>
+                                                    <option value="">Select a category</option>
                                                     @if($categories->isNotEmpty())
                                                     @foreach ($categories as $category )
                                                     <option value="{{ $category->id}}">{{ $category->name }}</option>
