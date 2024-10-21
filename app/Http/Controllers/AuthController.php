@@ -75,7 +75,7 @@ class AuthController extends Controller
                     // Redirect to books for authorized user
                     return redirect()->route('books.create'); 
                 } else if($user->role == 3) {
-                    return redirect()->route('account.profile'); 
+                    return redirect()->route('account.sellerProfile'); 
                 }
                  else {
                     // Log out unauthorized users
@@ -101,7 +101,101 @@ class AuthController extends Controller
         //$data = [];
         //$genres = Category::orderBy('name', 'ASC')->get();
         //$data['categories'] = $genres; // Correct assignment
-        return view('front.account.profile');
+        $userId= Auth::user()->id;
+
+        $counties = County::orderBy('name','ASC')->get();
+        $sub_counties = SubCounty::orderBy('name','ASC')->get();
+        $towns = Towns::orderBy('name','ASC')->get();
+
+        $user = User::where('id',$userId)->first();
+
+        $address = CustomerAddress::where('user_id',$userId)->first();
+        return view('front.account.profile',[
+            'user' => $user,
+            'counties' => $counties,
+            'address' => $address,
+            'sub_counties' => $sub_counties,
+            'towns' => $towns
+        ]);
+    }
+
+    public function updateBuyerProfile(Request $request) {
+        $userId = Auth::user()->id;
+        $validator = Validator::make($request->all(),[
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email,except,id',
+            'phone' => 'required'
+        ]);
+
+        if ($validator->passes()) {
+            $user = User::find($userId);
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->phone = $request->phone;
+            $user->save();
+
+            session()->flash('success','Profile Updated Successfully');
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Profile Updated Successfully.'
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors()
+            ]);
+        }
+    }
+
+    public function updateBuyerAddress(Request $request) {
+        $userId = Auth::user()->id;
+        $validator = Validator::make($request->all(),[
+            'first_name' => 'required|min:5',
+            'last_name' => 'required',
+            'email' => 'required|email',
+            'county_id' => 'required',
+            'sub_county_id' => 'required',
+            'town_id' => 'required',
+            'mobile' => 'required',
+            'address' => 'required|min:5',
+        ]);
+
+        if ($validator->passes()) {
+            /*$user = User::find($userId);
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->phone = $request->phone;
+            $user->save(); */
+
+            CustomerAddress::updateOrCreate(
+                ['user_id' => $userId],
+                [
+                    'user_id' => $userId,
+                    'first_name' => $request->first_name,
+                    'last_name' => $request->last_name,
+                    'email' => $request->email,
+                    'mobile' => $request->mobile,
+                    'county_id' => $request->county_id,
+                    'sub_county_id' => $request->sub_county_id,
+                    'town_id' => $request->town_id,
+                    'address' => $request->address,
+                    'apartment' => $request->apartment,
+                ]
+            );
+
+            session()->flash('success','Address Updated Successfully');
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Profile Updated Successfully.'
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors()
+            ]);
+        }
     }
 
     public function sellerProfile() {
@@ -263,5 +357,89 @@ class AuthController extends Controller
         $data['orderItemsCount'] = $orderItemsCount;
         return view('front.account.order-detail', $data);
 
+    }
+
+    public function sellerShowChangePasswordForm() {
+        return view('front.account.seller-change-password');
+    }
+
+    public function sellerChangePassword(Request $request) {
+        $validator = Validator::make($request->all(),[
+            'old_password' => 'required',
+            'new_password' => 'required|min:5',
+            'confirm_password' => 'required|same:new_password',            
+        ]);
+
+        if ($validator->passes()) {
+
+            $user = User::select('id','password')->where('id',Auth::user()->id)->first();
+
+            if (Hash::check(!$request->old_password,$user->password)){
+                session()->flash('error','Your old password is incorrect, please try again.');
+
+                return response()->json([
+                    'status' => true,
+                ]);
+            }
+
+            User::where('id',$user->id)->update([
+                'password' => Hash::make($request->new_password)
+            ]);
+
+            session()->flash('success','Your have successfully changed your password.');
+
+                return response()->json([
+                    'status' => true,
+                ]);
+            //dd($user);
+
+        } else {
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors()
+            ]);
+        }
+    }
+
+    public function showChangePasswordForm() {
+        return view('front.account.change-password');
+    }
+
+    public function changePassword(Request $request) {
+        $validator = Validator::make($request->all(),[
+            'old_password' => 'required',
+            'new_password' => 'required|min:5',
+            'confirm_password' => 'required|same:new_password',            
+        ]);
+
+        if ($validator->passes()) {
+
+            $user = User::select('id','password')->where('id',Auth::user()->id)->first();
+
+            if (Hash::check(!$request->old_password,$user->password)){
+                session()->flash('error','Your old password is incorrect, please try again.');
+
+                return response()->json([
+                    'status' => true,
+                ]);
+            }
+
+            User::where('id',$user->id)->update([
+                'password' => Hash::make($request->new_password)
+            ]);
+
+            session()->flash('success','Your have successfully changed your password.');
+
+                return response()->json([
+                    'status' => true,
+                ]);
+            //dd($user);
+
+        } else {
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors()
+            ]);
+        }
     }
 }

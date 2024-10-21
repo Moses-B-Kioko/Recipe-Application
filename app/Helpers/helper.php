@@ -5,6 +5,7 @@ use App\Models\BookImage;
 use App\Models\Order;
 use App\Mail\OrderEmail;
 use App\Models\County;
+use App\Models\Page;
 use Illuminate\Support\Facades\Mail;
 
 function getGenres(){
@@ -45,5 +46,10 @@ function orderEmail($orderId, $userType="customer") {
 
 function getCountyInfo ($id) {
     return County::where('id',$id)->first();
+}
+
+function staticPages() {
+    $pages = Page::orderBy('name','ASC')->get();
+    return $pages;
 }
 ?>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Book;
+use App\Models\Page;
 
 
 class FrontController extends Controller
@@ -21,5 +22,16 @@ class FrontController extends Controller
                 ->take(8)->get();
         $data['latestBooks'] = $latestBooks;
         return view('front.home', $data);
+    }
+
+    public function page($slug) {
+        $page = Page::where('slug',$slug)->first();
+        if ($page == null) {
+            abort(404);
+        }
+        return view('front.page',[
+            'page' => $page
+        ]);
+        //dd($page);
     }
 }

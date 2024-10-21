@@ -4,6 +4,12 @@
 <h1 style="text-align: center;">Dashboard</h1>
 
 <div class="container-fluid">
+     <!-- Export Buttons -->
+     <div class="export-buttons mb-3" style="text-align: center;">
+        <button id="exportCSV" class="btn btn-secondary" style="margin-right: 5px;">Export CSV</button>
+        <button id="exportExcel" class="btn btn-success" style="margin-right: 5px;">Export Excel</button>
+        <button id="downloadPDF" class="btn btn-primary" style="margin-right: 5px;">Download PDF</button>
+    </div>
     <div class="row mb-4">
         <!-- Total Sales Card -->
         <div class="col-md-3">
@@ -48,12 +54,7 @@
         <span class="visually-hidden">Loading...</span>
     </div>
 
-    <!-- Export Buttons -->
-    <div class="export-buttons mb-3">
-        <button id="exportCSV" class="btn btn-secondary" style="margin-right: 5px;">Export CSV</button>
-        <button id="exportExcel" class="btn btn-success" style="margin-right: 5px;">Export Excel</button>
-        <button id="downloadPDF" class="btn btn-primary" style="margin-right: 5px;">Download PDF</button>
-    </div>
+   
 
     <h3 style="text-align: center;">Charts</h3>
 

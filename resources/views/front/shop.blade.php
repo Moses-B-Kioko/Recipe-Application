@@ -131,7 +131,7 @@
                                     <a class="whishlist" href="222"><i class="far fa-heart"></i></a>                            
 
                                     <div class="product-action">
-                                @if($book>track_qty == 'Yes')
+                                @if($book->track_qty == 'Yes')
                                     @if ($book->qty > 0)
                                     <a class="btn btn-dark" href="javascript:void(0);" onclick="addToCart({{$book->id }});">
                                         <i class="fa fa-shopping-cart"></i> Add To Cart

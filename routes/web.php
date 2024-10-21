@@ -19,8 +19,11 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController; 
+use App\Http\Controllers\PusherController; 
 use App\Http\Controllers\admin\UserController; 
+use App\Http\Controllers\admin\PageController; 
 use App\Http\Controllers\admin\DashboardController;
+use App\Http\Controllers\admin\SettingController;
 use Illuminate\Http\Request;
 
 /*
@@ -43,6 +46,12 @@ use Illuminate\Http\Request;
 //Route::get('/test', function () {
   //  orderEmail(10);
 //});
+Route::get('/message', 'App\Http\Controllers\PusherController@index');
+Route::post('/broadcast', 'App\Http\Controllers\PusherController@broadcast');
+Route::post('/receive', 'App\Http\Controllers\PusherController@receive');
+
+
+
 Route::get('/',[FrontController::class,'index'])->name('front.home');
 Route::get('/shop/{categorySlug?}/{subGenreSlug?}',[ShopController::class,'index'])->name('front.shop');
 Route::get('/book/{slug}',[ShopController::class,'book'])->name('front.book');
@@ -54,6 +63,7 @@ Route::get('/checkout',[CartController::class,'checkout'])->name('front.checkout
 Route::post('/process-checkout',[CartController::class,'processCheckout'])->name('front.processCheckout');
 Route::get('/thanks/{orderId}',[CartController::class,'thankyou'])->name('front.thankyou');
 Route::post('/get-order-summery',[CartController::class,'getOrderSummery'])->name('front.getOrderSummery');
+Route::get('/page/{slug}',[FrontController::class,'page'])->name('front.page');
 
 //Route::get('/login',[AuthController::class,'login'])->name('account.login');
 
@@ -69,9 +79,19 @@ Route::group(['prefix' => 'account'], function () {
 
     Route::group(['middleware' => 'auth'], function() {
         Route::get('/profile', [AuthController::class, 'profile'])->name('account.profile');
+        Route::post('/update-buyer-profile', [AuthController::class, 'updateBuyerProfile'])->name('account.updateBuyerProfile');
+        Route::post('/update-buyer-address', [AuthController::class, 'updateBuyerAddress'])->name('account.updateBuyerAddress');
+        
+        Route::get('/seller-change-password', [AuthController::class, 'sellerShowChangePasswordForm'])->name('account.sellerShowChangePasswordForm');
+        Route::post('/seller-process-change-password', [AuthController::class, 'sellerChangePassword'])->name('account.sellerChangePassword');
+
+
+        Route::get('/change-password', [AuthController::class, 'showChangePasswordForm'])->name('account.changePassword');
+        Route::post('/process-change-password', [AuthController::class, 'changePassword'])->name('account.processChangePassword');
+
+        Route::get('/sellerProfile', [AuthController::class, 'sellerProfile'])->name('account.sellerProfile');
         Route::post('/update-profile', [AuthController::class, 'updateSellerProfile'])->name('account.updateSellerProfile');
         Route::post('/update-address', [AuthController::class, 'updateAddress'])->name('account.updateAddress');
-        Route::get('/sellerProfile', [AuthController::class, 'sellerProfile'])->name('account.sellerProfile');
         Route::get('/my-orders', [AuthController::class, 'orders'])->name('account.orders');
         Route::get('/order-detail/{orderId}', [AuthController::class, 'orderDetails'])->name('account.orderDetails');
         Route::post('/books',[BookController::class,'store'])->name('books.store');
@@ -159,13 +179,20 @@ Route::group(['prefix' => 'admin'], function () {
         Route::delete('/sub-genre/{subgenre}', [SubGenreController::class, 'destroy'])->name('sub-genre.delete');
 
         //User Routes
-        Route::get('users',[UserController::class,'index'])->name('users.index');
-        Route::get('users/create',[UserController::class,'create'])->name('users.create');
-        Route::post('users',[UserController::class,'store'])->name('users.store');
-        Route::get('users/{user}/edit',[UserController::class,'edit'])->name('users.edit');
-        Route::put('users/{user}',[UserController::class,'update'])->name('users.update');
-        Route::delete('users/{user}',[UserController::class,'destroy'])->name('users.destroy');
+        Route::get('/users',[UserController::class,'index'])->name('users.index');
+        Route::get('/users/create',[UserController::class,'create'])->name('users.create');
+        Route::post('/users',[UserController::class,'store'])->name('users.store');
+        Route::get('/users/{user}/edit',[UserController::class,'edit'])->name('users.edit');
+        Route::put('/users/{user}',[UserController::class,'update'])->name('users.update');
+        Route::delete('/users/{user}',[UserController::class,'destroy'])->name('users.destroy');
 
+        //Page Routes
+        Route::get('/pages',[PageController::class,'index'])->name('pages.index');
+        Route::get('/pages/create',[PageController::class,'create'])->name('pages.create');
+        Route::post('/pages',[PageController::class,'store'])->name('pages.store');
+        Route::get('/pages/{page}/edit',[PageController::class,'edit'])->name('pages.edit');
+        Route::put('/pages/{page}',[PageController::class,'update'])->name('pages.update');
+        Route::delete('/pages/{page}',[PageController::class,'destroy'])->name('pages.destroy');
 
         //Dashboard Routes
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
@@ -176,6 +203,11 @@ Route::group(['prefix' => 'admin'], function () {
 
         //Admin Book Routes
         Route::get('/admin-books',[BookController::class,'adminIndex'])->name('books.adminIndex');
+
+        //Settings routes
+        Route::get('/change-password',[SettingController::class,'showChangePasswordForm'])->name('admin.showChangePasswordForm');
+        Route::post('/process-change-password',[SettingController::class,'processchangePassword'])->name('admin.processchangePassword');
+
 
 
 

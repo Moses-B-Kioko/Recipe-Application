@@ -17,6 +17,9 @@
 
 		<link rel="stylesheet" href="{{ asset('admin-assets/plugins/select2/css/select2.min.css')}}">
 
+		<link rel="stylesheet" href="{{ asset('admin-assets/plugins/summernote/summernote.min.css')}}">
+    <link rel="stylesheet" href="{{ asset('admin-assets/plugins/select2/css/select2.min.css')}}">
+
 		<meta name="csrf-token" content="{{ csrf_token()}}">
 	</head>
 	<body class="hold-transition sidebar-mini">
@@ -58,7 +61,7 @@
 								<i class="fas fa-user-cog mr-2"></i> Settings								
 							</a>
 							<div class="dropdown-divider"></div>
-							<a href="#" class="dropdown-item">
+							<a href="{{ route('admin.showChangePasswordForm') }}" class="dropdown-item">
 								<i class="fas fa-lock mr-2"></i> Change Password
 							</a>
 							<div class="dropdown-divider"></div>
@@ -101,6 +104,8 @@
 
 		<!-- AdminLTE for demo purposes -->
 		<script src="{{ asset('admin-assets/js/demo.js')}}"></script>
+		<script src="{{ asset('admin-assets/plugins/summernote/summernote.min.js')}}"></script>
+<script src="{{ asset('admin-assets/plugins/select2/js/select2.min.js')}}"></script>
 
 
 		<script type="text/javascript">
@@ -110,6 +115,9 @@
 					}
 				});
 				
+				$(document).ready(function(){
+					$(".summernote").summernote(); // Ensure you have a textarea with class 'summernote'
+				});
 		</script>
         @yield('customJs')
 	</body>
