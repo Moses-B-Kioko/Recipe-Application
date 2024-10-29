@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('books', function (Blueprint $table) {
-            $table->renameColumn('genre_id', 'categories_id'); 
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('user_type')->default('buyer'); // Default to buyer
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('books', function (Blueprint $table) {
-            $table->renameColumn('categories_id', 'genre_id');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('user_type'); // Drop the user_type column
         });
     }
 };

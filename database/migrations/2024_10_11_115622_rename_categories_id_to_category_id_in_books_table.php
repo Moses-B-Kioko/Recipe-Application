@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('books', function (Blueprint $table) {
+        /*Schema::table('books', function (Blueprint $table) {
             $table->renameColumn('categories_id', 'category_id'); 
-        });
+        });*/
     }
 
     /**
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('books', function (Blueprint $table) {
+       /* Schema::table('books', function (Blueprint $table) {
             $table->renameColumn('category_id', 'categories_id');
-        });
+        }); */
     }
 };

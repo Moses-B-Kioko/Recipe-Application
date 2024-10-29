@@ -18,4 +18,9 @@ class Order extends Model
 {
     return $this->belongsTo(Book::class);
 }
+
+ // This relationship helps track which seller's books are in the order
+ public function books() {
+    return $this->hasManyThrough(Book::class, OrderItem::class);
+}
 }

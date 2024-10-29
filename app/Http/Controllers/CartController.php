@@ -213,8 +213,8 @@ class CartController extends Controller
             'last_name' => 'required',
             'email' => 'required|email',
             'county_id' => 'required',
-            'sub_county_id' => 'required',
-            'town_id' => 'required',
+            //'sub_county_id' => 'required',
+            //'town_id' => 'required',
             'mobile' => 'required',
             'address' => 'required|min:5',
         ]);
@@ -242,8 +242,8 @@ class CartController extends Controller
                 'email' => $request->email,
                 'mobile' => $request->mobile,
                 'county_id' => $request->county_id,
-                'sub_county_id' => $request->sub_county_id,
-                'town_id' => $request->town_id,
+                //'sub_county_id' => $request->sub_county_id,
+                //'town_id' => $request->town_id,
                 'address' => $request->address,
                 'apartment' => $request->apartment,
             ]
@@ -286,8 +286,8 @@ class CartController extends Controller
             $order->email = $request->email;
             $order->mobile = $request->mobile;
             $order->county_id = $request->county_id;
-            $order->sub_county_id = $request->sub_county_id;
-            $order->town_id = $request->town_id;
+           // $order->sub_county_id = $request->sub_county_id;
+            //$order->town_id = $request->town_id;
             $order->address = $request->address;
             $order->apartment = $request->apartment;
             $order->notes = $request->order_notes;

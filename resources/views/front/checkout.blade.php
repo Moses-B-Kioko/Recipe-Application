@@ -61,7 +61,7 @@
                                     </div>            
                                 </div>
 
-                                <div class="col-md-12">
+                                <!--<div class="col-md-12">
                                     <div class="mb-3">
                                         <select name="sub_county_id" id="sub_county" class="form-control">
                                             <option value="">Select a Sub County</option>
@@ -74,9 +74,9 @@
                                         </select>
                                         <p></p>
                                     </div>            
-                                </div>
+                                </div>-->
 
-                                <div class="col-md-12">
+                                <!--<div class="col-md-12">
                                     <div class="mb-3">
                                         <select name="town_id" id="town" class="form-control">
                                             <option value="">Select a Town</option>
@@ -89,7 +89,7 @@
                                         </select>
                                         <p></p>
                                     </div>            
-                                </div>
+                                </div>-->
 
                                 <div class="col-md-12">
                                     <div class="mb-3">
@@ -305,7 +305,7 @@
                     .html('');
                 }
 
-                if (errors.sub_county) {
+                /*if (errors.sub_county) {
                     $("#sub_county").addClass('is-invalid')
                     .siblings("p")
                     .addClass('invalid-feedback')
@@ -327,7 +327,7 @@
                     .siblings("p")
                     .removeClass('invalid-feedback')
                     .html('');
-                }
+                }*/
 
                 if (errors.address) {
                     $("#address").addClass('is-invalid')

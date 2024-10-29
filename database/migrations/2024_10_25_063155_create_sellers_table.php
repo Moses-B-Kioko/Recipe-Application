@@ -11,9 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('books', function (Blueprint $table) {
-            $table->renameColumn('genre_id', 'category_id'); 
+        Schema::create('sellers', function (Blueprint $table) {
+            $table->id();
+            $table->string('address')->nullable();
+            $table->string('inventory')->nullable();
+            $table->string('additionalInfo')->nullable();
+            $table->timestamps();
         });
+        
     }
 
     /**
@@ -21,9 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('books', function (Blueprint $table) {
-            $table->renameColumn('category_id', 'genre_id');
-
-        });
+        Schema::dropIfExists('sellers');
     }
 };

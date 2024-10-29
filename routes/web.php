@@ -24,6 +24,7 @@ use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\PageController; 
 use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\admin\SettingController;
+use App\Http\Controllers\SellerController;
 use Illuminate\Http\Request;
 
 /*
@@ -64,6 +65,17 @@ Route::post('/process-checkout',[CartController::class,'processCheckout'])->name
 Route::get('/thanks/{orderId}',[CartController::class,'thankyou'])->name('front.thankyou');
 Route::post('/get-order-summery',[CartController::class,'getOrderSummery'])->name('front.getOrderSummery');
 Route::get('/page/{slug}',[FrontController::class,'page'])->name('front.page');
+Route::post('/send-contact-email',[FrontController::class,'sendContactEmail'])->name('front.sendContactEmail');
+
+
+Route::get('/forgot-password',[AuthController::class,'forgetPassword'])->name('front.forgotPassword');
+Route::post('/process-forgot-password',[AuthController::class,'processForgotPassword'])->name('front.processForgotPassword');
+Route::get('/reset-password/{token}',[AuthController::class,'resetPassword'])->name('front.resetPassword');
+Route::post('/process-reset-password',[AuthController::class,'processResetPassword'])->name('front.processResetPassword');
+Route::post('/save-rating/{bookId}',[ShopController::class,'saveRating'])->name('front.saveRating');
+
+//Wishlist Routes
+Route::post('/add-to-wishlist',[FrontController::class,'addToWishlist'])->name('front.addToWishlist');
 
 //Route::get('/login',[AuthController::class,'login'])->name('account.login');
 
@@ -93,6 +105,8 @@ Route::group(['prefix' => 'account'], function () {
         Route::post('/update-profile', [AuthController::class, 'updateSellerProfile'])->name('account.updateSellerProfile');
         Route::post('/update-address', [AuthController::class, 'updateAddress'])->name('account.updateAddress');
         Route::get('/my-orders', [AuthController::class, 'orders'])->name('account.orders');
+        Route::get('/my-wishlist', [AuthController::class, 'wishlist'])->name('account.wishlist');
+        Route::post('/remove-book-from-wishlist', [AuthController::class, 'removeBookFromWishlist'])->name('account.removeBookFromWishlist');
         Route::get('/order-detail/{orderId}', [AuthController::class, 'orderDetails'])->name('account.orderDetails');
         Route::post('/books',[BookController::class,'store'])->name('books.store');
         Route::get('/product', [AuthController::class, 'product'])->name('account.product');
@@ -106,7 +120,22 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('upload-temp-image', [TempImagesController::class, 'create'])->name('temp-images.create');
 });
 
-         //Book Routes
+/*Route::prefix('seller')->name('seller.')->group(function(){
+    Route::middleware([])->group(function(){
+        Route::controller([])->group(function(){
+            Route::get('/login','login')->name('login');
+            Route::get('/register','register')->name('register'); 
+        });
+    });
+
+    Route::middleware([])->group(function(){
+        Route::controller(SellerController::class)->group(function(){
+            Route::get('/','home')->name('home');
+        });
+    });
+});*/
+Route::middleware(['auth:seller'])->group(function () {   
+        //Book Routes
          Route::get('/books',[BookController::class,'index'])->name('books.index');
          Route::get('/books/create', [BookController::class, 'create'])->name('books.create');
          Route::get('/book-subgenres', [BookSubGenreController::class, 'index'])->name('book-subgenres.index');
@@ -117,7 +146,7 @@ Route::group(['middleware' => 'auth'], function () {
          Route::delete('/book-images',[BookImageController::class,'destroy'])->name('book-images.destroy');
          Route::delete('/books/{book}',[BookController::class,'destroy'])->name('books.delete');
          Route::get('/get-books',[BookController::class,'getBooks'])->name('books.getBooks');
-
+        });
          //Shipping Routes
          Route::get('/shipping/create',[ShippingController::class,'create'])->name('shipping.create');
          Route::post('/shipping',[ShippingController::class,'store'])->name('shipping.store');
@@ -203,6 +232,8 @@ Route::group(['prefix' => 'admin'], function () {
 
         //Admin Book Routes
         Route::get('/admin-books',[BookController::class,'adminIndex'])->name('books.adminIndex');
+        Route::get('/ratings',[BookController::class,'bookRatings'])->name('books.bookRatings');
+        Route::get('/change-rating-status',[BookController::class,'changeRatingStatus'])->name('books.changeRatingStatus');
 
         //Settings routes
         Route::get('/change-password',[SettingController::class,'showChangePasswordForm'])->name('admin.showChangePasswordForm');

@@ -19,7 +19,9 @@ class Authenticate
     public function handle(Request $request, Closure $next): Response
     {
         if (!Auth::check()) {
-            return redirect($this->redirectTo($request));  // Redirect unauthenticated users
+            return $request->expectsJson()
+                ? response()->json(['message' => 'Unauthenticated'], 401)
+                : redirect()->route('account.login');  // Redirect to the specified route for login
         }
 
         return $next($request);  // Proceed for authenticated users

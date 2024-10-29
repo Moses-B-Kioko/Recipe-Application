@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Seeder\UsersTableSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -20,6 +21,8 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         \App\Models\Book::factory(30)->create();
+
+        $this->call(NewUsersTableSeeder::class);
 
     }
 }

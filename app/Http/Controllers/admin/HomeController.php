@@ -11,6 +11,8 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\TempImage;
+
 
 class HomeController extends Controller
 {
@@ -27,6 +29,10 @@ class HomeController extends Controller
         
         // Output a welcome message with the admin's name and a logout link.
         //echo 'Welcome ' . $admin->name . ' <a href="' . route('admin.logout') . '">Logout</a>';
+
+        
+
+
     }
 
     /**

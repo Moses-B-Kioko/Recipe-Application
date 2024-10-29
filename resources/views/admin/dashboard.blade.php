@@ -34,7 +34,7 @@
             <div class="card" style="background-color: #f8f9fa; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); transition: box-shadow 0.3s;">
                 <div class="card-body">
                     <h5 class="card-title">Best Selling Category:</h5>
-                    <p class="card-text">{{ $bestCategory->name }}</p> <!-- Display only the category name -->
+                     <p class="card-text">{{ $bestCategory->name }}</p> <!--Display only the category name -->
                 </div>
             </div>
         </div>

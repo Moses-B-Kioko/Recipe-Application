@@ -102,13 +102,13 @@
     <div class="container pb-5 pt-3">
         <div class="row">
             <div class="col-md-4">
-                <div class="footer-card">
-                    <h3>Get In Touch</h3>
-                    <p>No dolore ipsum accusam no lorem. <br>
-                    123 Street, New York, USA <br>
-                    exampl@example.com <br>
-                    000 000 0000</p>
-                </div>
+            <div class="footer-card">
+            <h3>Get In Touch</h3>
+            <p>We'd love to hear from you! Whether you have questions about our books, want to give feedback, or need support, feel free to reach out. <br>
+             Nairobi, Kenya <br>
+            Email: thebookery@gmail.com <br>
+            Phone: 0743996189</p>
+        </div>
             </div>
 
             <div class="col-md-4">
@@ -135,7 +135,7 @@
                     <ul>
                         <li><a href="{{ route('account.login')}}" title="Sell">Login</a></li>
                         <li><a href="{{ route('account.register')}}" title="Advertise">Register</a></li>
-                        <li><a href="#" title="Contact Us">My Orders</a></li>						
+                        <!--<li><a href="#" title="Contact Us">My Orders</a></li>-->						
                     </ul>
                 </div>
             </div>			
@@ -153,6 +153,24 @@
         </div>
     </div>
 </footer>
+
+<!-- Wishlist Modal -->
+<div class="modal fade" id="wishlistModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Success</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Load jQuery only once -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -210,6 +228,24 @@ function addToCart(id) {
                     window.location.href = "{{ route('front.cart')}}";
                 } else {
                     alert(response.message);
+                }
+            }
+        });
+    }
+
+    function addToWishlist(id) {
+        $.ajax({
+            url: '{{ route("front.addToWishlist")}}',
+            type: 'post',
+            data: {id:id},
+            dataType: 'json',
+            success: function(response) {
+                if(response.status == true) {
+                    $("#wishlistModal .modal-body").html(response.message);
+                    $("#wishlistModal").modal('show');
+                } else {
+                    window.location.href = "{{ route('account.login')}}";
+                    //alert(response.message);
                 }
             }
         });

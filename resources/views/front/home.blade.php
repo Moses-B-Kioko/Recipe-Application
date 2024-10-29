@@ -2,56 +2,59 @@
 
 @section('content')
 <section class="section-1">
-        <div id="carouselExampleIndicators" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="false">
+        <div id="carouselExampleIndicators" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="3000">
             <div class="carousel-inner">
                 <div class="carousel-item active">
                     <!-- <img src="images/carousel-1.jpg" class="d-block w-100" alt=""> -->
 
                     <picture>
-                        <source media="(max-width: 799px)" srcset="{{ asset('front-assets/images/carousel-1-m.jpg')}}" />
-                        <source media="(min-width: 800px)" srcset="{{ asset('front-assets/images/carousel-1.jpg')}}" />
-                        <img src="{{ asset('front-assets/images/carousel-1.jpg')}}" alt="" />
+                        <source media="(max-width: 799px)" srcset="{{ asset('front-assets/images/background.jpg')}}" />
+                        <source media="(min-width: 800px)" srcset="{{ asset('front-assets/images/background.jpg')}}" />
+                        <img src="{{ asset('front-assets/images/background.jpg')}}" alt="" style="width: 100%; height: auto; max-height: 500px;" />
                     </picture>
 
                     <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
-                        <div class="p-3">
-                            <h1 class="display-4 text-white mb-3">Kids Genre</h1>
-                            <p class="mx-md-5 px-5">Lorem rebum magna amet lorem magna erat diam stet. Sadips duo stet amet amet ndiam elitr ipsum diam</p>
-                            <a class="btn btn-outline-light py-2 px-4 mt-3" href="{{ route('front.shop')}}">Shop Now</a>
-                        </div>
+                    <div class="p-3">
+                        <h1 class="display-4 text-white mb-3">Study Smarter: 70% Off School Books & Resources!</h1>
+                        <p class="mx-md-5 px-5">Find top-quality textbooks, reference materials, and exam prep guides all in one place. Don’t miss out on these savings for the upcoming school year!</p>
+                        <a class="btn btn-outline-light py-2 px-4 mt-3" href="{{ route('front.shop') }}">Shop Now</a>
                     </div>
+                </div>
+
                 </div>
                 <div class="carousel-item">
                     
                 <picture>
-                        <source media="(max-width: 799px)" srcset="{{ asset('front-assets/images/carousel-2-m.jpg')}}" />
-                        <source media="(min-width: 800px)" srcset="{{ asset('front-assets/images/carousel-2.jpg')}}" />
-                        <img src="{{ asset('front-assets/images/carousel-2.jpg')}}" alt="" />
+                        <source media="(max-width: 799px)" srcset="{{ asset('front-assets/images/background1.jpg')}}" />
+                        <source media="(min-width: 800px)" srcset="{{ asset('front-assets/images/background1.jpg')}}" />
+                        <img src="{{ asset('front-assets/images/background1.jpg')}}" alt="" style="width: 100%; height: auto; max-height: 500px;"/>
                     </picture>
 
                     <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
-                        <div class="p-3">
-                            <h1 class="display-4 text-white mb-3">Womens Genre</h1>
-                            <p class="mx-md-5 px-5">Lorem rebum magna amet lorem magna erat diam stet. Sadips duo stet amet amet ndiam elitr ipsum diam</p>
-                            <a class="btn btn-outline-light py-2 px-4 mt-3" href="#">Shop Now</a>
-                        </div>
+                    <div class="p-3">
+                        <h1 class="display-4 text-white mb-3">Huge Savings: 70% Off on School Books & Supplies!</h1>
+                        <p class="mx-md-5 px-5">Get everything your child needs for the new school year. From textbooks to learning materials, we have you covered with incredible discounts.</p>
+                        <a class="btn btn-outline-light py-2 px-4 mt-3" href="{{ route('front.shop') }}">Shop Now</a>
                     </div>
+                </div>
+
                 </div>
                 <div class="carousel-item">
 
                     <picture>
-                        <source media="(max-width: 799px)" srcset="{{ asset('front-assets/images/carousel-3-m.jpg')}}" />
-                        <source media="(min-width: 800px)" srcset="{{ asset('front-assets/images/carousel-3.jpg')}}" />
-                        <img src="{{ asset('front-assets/images/carousel-2.jpg')}}" alt="" />
+                        <source media="(max-width: 799px)" srcset="{{ asset('front-assets/images/background2.jpg')}}" />
+                        <source media="(min-width: 800px)" srcset="{{ asset('front-assets/images/background2.jpg')}}" />
+                        <img src="{{ asset('front-assets/images/background2.jpg')}}" alt="" style="width: 100%; height: auto; max-height: 500px;"/>
                     </picture>
 
                     <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
-                        <div class="p-3">
-                            <h1 class="display-4 text-white mb-3">Shop Online at Flat 70% off on Specific Books</h1>
-                            <p class="mx-md-5 px-5">Lorem rebum magna amet lorem magna erat diam stet. Sadips duo stet amet amet ndiam elitr ipsum diam</p>
-                            <a class="btn btn-outline-light py-2 px-4 mt-3" href="#">Shop Now</a>
-                        </div>
+                    <div class="p-3">
+                        <h1 class="display-4 text-white mb-3">Back to School: Up to 70% Off on Essential School Books!</h1>
+                        <p class="mx-md-5 px-5">Prepare for success this school year with our wide selection of textbooks, workbooks, and study guides at unbeatable prices. Stock up now!</p>
+                        <a class="btn btn-outline-light py-2 px-4 mt-3" href="{{ route('front.shop') }}">Shop Now</a>
                     </div>
+                </div>
+
                 </div>
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
@@ -70,19 +73,19 @@
                 <div class="col-lg-3">
                     <div class="box shadow-lg">
                         <div class="fa icon fa-check text-primary m-0 mr-3"></div>
-                        <h2 class="font-weight-semi-bold m-0">Quality Product</h5>
+                        <h2 class="font-weight-semi-bold m-0">Quality Books</h5>
                     </div>                    
                 </div>
                 <div class="col-lg-3 ">
                     <div class="box shadow-lg">
                         <div class="fa icon fa-shipping-fast text-primary m-0 mr-3"></div>
-                        <h2 class="font-weight-semi-bold m-0">Free Shipping</h2>
+                        <h2 class="font-weight-semi-bold m-0">Fast Shipping</h2>
                     </div>                    
                 </div>
                 <div class="col-lg-3">
                     <div class="box shadow-lg">
                         <div class="fa icon fa-exchange-alt text-primary m-0 mr-3"></div>
-                        <h2 class="font-weight-semi-bold m-0">14-Day Return</h2>
+                        <h2 class="font-weight-semi-bold m-0">Returns Available</h2>
                     </div>                    
                 </div>
                 <div class="col-lg-3 ">
@@ -147,7 +150,7 @@
                                 <img src="{{ asset('admin-assets/img/default-150x150.png')}}" />
                                 @endif
                             </a>
-                            <a class="whishlist" href="222"><i class="far fa-heart"></i></a>                            
+                            <a onclick="addToWishlist({{ $book->id }})" class="whishlist" href="javascript:void(0);"><i class="far fa-heart"></i></a>                            
 
                             <div class="product-action">
                                 @if($book->track_qty == 'Yes')
@@ -210,7 +213,7 @@
                                 <img src="{{ asset('admin-assets/img/default-150x150.png')}}" />
                                     @endif
                             </a>
-                            <a class="whishlist" href="222"><i class="far fa-heart"></i></a>                            
+                            <a onclick="addToWishlist({{ $book->id }})" class="whishlist" href="javascript:void(0);"><i class="far fa-heart"></i></a>                            
 
                             <div class="product-action">
                                 @if($book->track_qty == 'Yes')

@@ -49,6 +49,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
             ],
+            'seller' => [
+            'driver' => 'session',
+            'provider' => 'sellers', // Link to the sellers provider
+        ],
     ],
 
     /*
@@ -78,6 +82,10 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
+          'sellers' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Seller::class,
+    ],
 
         // 'users' => [
         //     'driver' => 'database',
@@ -107,6 +115,18 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
+            'table' => 'password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'admins' => [
+            'provider' => 'admins',
+            'table' => 'password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'sellers' => [
+            'provider' => 'sellers',
             'table' => 'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,

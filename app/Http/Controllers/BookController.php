@@ -7,28 +7,44 @@ use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\SubGenre;
 use App\Models\Book;
+use App\Models\User;
+use App\Models\Seller;
 use App\Models\BookImage;
 use App\Models\TempImage;
+use App\Models\BookRating;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Auth;
 
 
 class BookController extends Controller
 {
-    public function index (Request $request) 
-    {
-        $books = Book::latest('id')->with('book_images');
+    public function index(Request $request)
+{
+    // Retrieve the seller ID of the currently authenticated user
+    $sellerId = auth('seller')->id();
 
-        if($request->get('keyword') != "") {
-            $books = $books->where('title', 'like', '%'.$request->keyword.'%');
-        }
-        $books = $books->paginate();
-        //dd($books);
-        $data['books'] = $books;
-        return view('front.books.list',$data);
+    // Initialize the query, filtering books by seller ID and eager loading book images
+    $books = Book::where('seller_id', $sellerId)->latest('id')->with('book_images');
+
+    // Filter by keyword if a search term is provided
+    if ($request->get('keyword') != "") {
+        $books = $books->where('title', 'like', '%'.$request->keyword.'%');
     }
+
+    // Paginate the results
+    $books = $books->paginate();
+
+    // Prepare data for the view
+    $data['books'] = $books;
+
+    // Return the view with the books data
+    return view('front.books.list', $data);
+}
+
+    
 
     public function adminIndex (Request $request) 
     {
@@ -38,12 +54,13 @@ class BookController extends Controller
             $books = $books->where('title', 'like', '%'.$request->keyword.'%');
         }
         $books = $books->paginate();
-        //dd($books);
         $data['books'] = $books;
         return view('admin.books.list',$data);
     }
 
     public function create() {
+        session(['url.intended' => url()->previous()]);
+
         $data = [];
         $categories = Category::orderBy('name','ASC')->get();
         $data['categories'] = $categories;
@@ -95,6 +112,11 @@ class BookController extends Controller
             $book->shipping_returns = $request->shipping_returns;
             $book->short_description = $request->short_description;
             $book->related_books = (!empty($request->related_books)) ? implode(',',$request->related_books) : '';
+            //$book->seller_id = auth()->guard('seller')->id();
+            //$book->seller_id = auth()->id(); 
+            // In your store method
+            //$book->seller_id = $request->input('seller_id'); 
+            $book->seller_id = auth('seller')->id();
             $book->save();
 
 
@@ -230,6 +252,7 @@ class BookController extends Controller
             $book->shipping_returns = $request->shipping_returns;
             $book->short_description = $request->short_description;
             $book->related_books = (!empty($request->related_books)) ? implode(',',$request->related_books) : '';
+           
             $book->save();
 
             //Save Gallery Pics
@@ -296,6 +319,34 @@ class BookController extends Controller
 
         return response()->json([
             'tags' => $tempBook,
+            'status' => true
+        ]);
+    }
+
+    public function bookRatings(Request $request) {
+        $ratings = BookRating::select('book_ratings.*','books.title as bookTitle')->orderBy('book_ratings.created_at','DESC');
+        $ratings = $ratings->leftJoin('books','books.id','book_ratings.book_id');
+
+        if ($request->get('keyword') != "") {
+            $ratings = $ratings->orwhere('books.title', 'like', '%'.$request->keyword.'%');
+            $ratings = $ratings->orwhere('book_ratings.username', 'like', '%'.$request->keyword.'%');
+        }
+        $ratings = $ratings->paginate(10);
+
+        return view('admin.books.ratings',[
+            'ratings' => $ratings
+        ]);
+    }
+
+    public function changeRatingStatus(Request $request) {
+
+        $bookRating = BookRating::find($request->id);
+        $bookRating->status = $request->status;
+        $bookRating->save();
+
+        session()->flash('success','Status changed successfully.');
+
+        return response()->json([
             'status' => true
         ]);
     }

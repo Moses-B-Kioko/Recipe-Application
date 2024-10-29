@@ -6,6 +6,9 @@ use App\Models\Category;
 use App\Models\Book;
 use App\Models\SubGenre;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use App\Models\BookRating;
+
 
 class ShopController extends Controller
 {
@@ -70,10 +73,15 @@ class ShopController extends Controller
     }
 
     public function book($slug) {
-        $book = Book::where('slug', $slug)->with('book_images')->first();
+        $book = Book::where('slug', $slug)
+        ->withCount('book_ratings')
+        ->withSum('book_ratings','rating')
+        ->with(['book_images','book_ratings'])->first();
+
         if($book == null) {
             abort(404);
         }
+
 
         $relatedBooks = [];
         // Fetch related books
@@ -84,7 +92,62 @@ class ShopController extends Controller
 
         $data['book'] = $book;
         $data['relatedBooks'] = $relatedBooks;
+
+        //Rating Calculation
+        // "book_ratings_count" => 2
+        //"book_ratings_sum_rating" => 6.0
+        $avgRating = '0.00';
+        $avgRatingPer = 0;
+        if ($book->book_ratings_count > 0) {
+            $avgRating = number_format(($book->book_ratings_sum_rating/$book->book_ratings_count),2);
+            $avgRatingPer = ($avgRating*100)/5;
+        }
+
+        $data['avgRating'] = $avgRating;
+        $data['avgRatingPer'] = $avgRatingPer;
+
+
         return view('front.book', $data);
 
+    }
+
+    public function saveRating($id, Request $request) {
+        $validator = Validator::make($request->all(),[
+            'name' => 'required',
+            'email' => 'required|email',
+            'comment' => 'required|min:10',
+            'rating' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors()
+            ]);
+        }
+
+        $count = BookRating::where('email',$request->email)->count();
+        if ($count > 0) {
+            session()->flash('error','You already rated this book.');
+            return response()->json([
+                'status' => true,
+            ]);
+        }
+
+        $bookRating = new BookRating;
+        $bookRating->book_id = $id;
+        $bookRating->username = $request->name;
+        $bookRating->email = $request->email;
+        $bookRating->comment = $request->comment;
+        $bookRating->rating = $request->rating;
+        $bookRating->status = 0;
+        $bookRating->save();
+
+        session()->flash('success','Thanks for your rating.');
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Thanks for your rating.'
+        ]);
     }
 }

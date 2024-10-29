@@ -16,15 +16,20 @@ return new class extends Migration
             $table->string('title');
             $table->string('author');
             $table->string('description')->nullable();
-            $table->double('price', 10,2);
-            $table->double('compare_price', 10,2)->nullable();
-            $table->foreignId('genre_id')->constrained()->onDelete('cascade');
+            $table->double('price', 10, 2);
+            $table->double('compare_price', 10, 2)->nullable();
+            // Make sure this matches the categories table
+            $table->foreignId('category_id')->constrained()->onDelete('cascade'); 
+            // Make sure this matches the sub_genres table
             $table->foreignId('sub_genre_id')->nullable()->constrained()->onDelete('cascade');
-            $table->enum('is_featured',['Yes','No'])->default('No');
+            $table->enum('is_featured', ['Yes', 'No'])->default('No');
             $table->string('Condition');
-            $table->enum('track_qty',['Yes','No'])->default('Yes');
+            $table->enum('track_qty', ['Yes', 'No'])->default('Yes');
             $table->integer('qty')->nullable();
             $table->integer('status')->default(1);
+            //$table->unsignedBigInteger('seller_id')->nullable();
+            // Ensure seller_id references the correct type in the sellers table
+            //$table->foreign('seller_id')->references('id')->on('sellers')->onDelete('cascade');
             $table->timestamps();
         });
     }

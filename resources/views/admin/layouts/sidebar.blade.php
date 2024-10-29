@@ -43,6 +43,13 @@
 									<p>Books</p>
 								</a>
 							</li>
+
+							<li class="nav-item">
+								<a href="{{ route('books.bookRatings')}}" class="nav-link">
+									<i class="nav-icon fa fa-star"></i>
+									<p>Ratings</p>
+								</a>
+							</li>
 							
 							<!--<li class="nav-item">
 								<a href="#" class="nav-link">
