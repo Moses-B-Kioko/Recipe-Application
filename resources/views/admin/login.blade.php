@@ -76,7 +76,7 @@
                 </form>
                 <!-- A link for users who forgot their password, leading them to the password recovery page. -->
                 <p class="mb-1 mt-3">
-                    <a href="forgot-password.html">I forgot my password</a>
+                    <a href="{{ route('admin.forgotPassword') }}">I forgot my password</a>
                 </p>
             </div>
             <!-- End of the card body. -->

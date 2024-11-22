@@ -6,7 +6,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\admin\AdminLoginController;
 use App\Http\Controllers\admin\HomeController;
-
+use App\Http\Controllers\ChatbotController;
+use App\Http\Controllers\PaypalController;
 use App\Http\Controllers\admin\CategoryController; 
 use App\Http\Controllers\admin\TempImagesController; 
 use App\Http\Controllers\admin\SubGenreController; 
@@ -51,6 +52,7 @@ Route::get('/message', 'App\Http\Controllers\PusherController@index');
 Route::post('/broadcast', 'App\Http\Controllers\PusherController@broadcast');
 Route::post('/receive', 'App\Http\Controllers\PusherController@receive');
 
+Route::get('/chatbot', [ChatbotController::class, 'getResponse']);
 
 
 Route::get('/',[FrontController::class,'index'])->name('front.home');
@@ -69,6 +71,7 @@ Route::post('/send-contact-email',[FrontController::class,'sendContactEmail'])->
 
 
 Route::get('/forgot-password',[AuthController::class,'forgetPassword'])->name('front.forgotPassword');
+Route::get('/admin-forgot-password',[AuthController::class,'adminforgetPassword'])->name('admin.forgotPassword');
 Route::post('/process-forgot-password',[AuthController::class,'processForgotPassword'])->name('front.processForgotPassword');
 Route::get('/reset-password/{token}',[AuthController::class,'resetPassword'])->name('front.resetPassword');
 Route::post('/process-reset-password',[AuthController::class,'processResetPassword'])->name('front.processResetPassword');
@@ -76,6 +79,10 @@ Route::post('/save-rating/{bookId}',[ShopController::class,'saveRating'])->name(
 
 //Wishlist Routes
 Route::post('/add-to-wishlist',[FrontController::class,'addToWishlist'])->name('front.addToWishlist');
+
+//Seller Auth Routes
+//Route::post('/add-to-seller-account',[FrontController::class,'addBookToSellerAccount'])->name('front.addBookToSellerAccount');
+
 
 //Route::get('/login',[AuthController::class,'login'])->name('account.login');
 
@@ -104,13 +111,25 @@ Route::group(['prefix' => 'account'], function () {
         Route::get('/sellerProfile', [AuthController::class, 'sellerProfile'])->name('account.sellerProfile');
         Route::post('/update-profile', [AuthController::class, 'updateSellerProfile'])->name('account.updateSellerProfile');
         Route::post('/update-address', [AuthController::class, 'updateAddress'])->name('account.updateAddress');
+
         Route::get('/my-orders', [AuthController::class, 'orders'])->name('account.orders');
+        Route::get('/my-seller-orders', [AuthController::class, 'sellerOrders'])->name('account.sellerOrders');
+
         Route::get('/my-wishlist', [AuthController::class, 'wishlist'])->name('account.wishlist');
         Route::post('/remove-book-from-wishlist', [AuthController::class, 'removeBookFromWishlist'])->name('account.removeBookFromWishlist');
         Route::get('/order-detail/{orderId}', [AuthController::class, 'orderDetails'])->name('account.orderDetails');
         Route::post('/books',[BookController::class,'store'])->name('books.store');
         Route::get('/product', [AuthController::class, 'product'])->name('account.product');
         Route::get('/logout',[AuthController::class,'logout'])->name('account.logout');
+
+        //Paypal 
+       // Route::get('/paypal', 'PaypalController@paypal');
+       Route::post('/paypal/pay', [PaypalController::class, 'pay'])->name('paypal.pay');
+       Route::post('/success', [PaypalController::class, 'success'])->name('paypal.success');
+       Route::post('/error', [PaypalController::class, 'error'])->name('paypal.error');
+       
+       /*Route::get('/success','PaypalController@success');
+        Route::get('/error','PaypalController@error');*/
 
     });
 });
@@ -153,6 +172,8 @@ Route::middleware(['auth:seller'])->group(function () {
          Route::get('/shipping/{id}',[ShippingController::class,'edit'])->name('shipping.edit');
          Route::put('/shipping/{id}',[ShippingController::class,'update'])->name('shipping.update');
          Route::delete('/shipping/{id}',[ShippingController::class,'destroy'])->name('shipping.delete');
+
+         
 
 
 
@@ -239,7 +260,12 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/change-password',[SettingController::class,'showChangePasswordForm'])->name('admin.showChangePasswordForm');
         Route::post('/process-change-password',[SettingController::class,'processchangePassword'])->name('admin.processchangePassword');
 
-
+        //Admin Shipping Routes
+        Route::get('/shipping/create',[ShippingController::class,'adminCreate'])->name('shipping.adminCreate');
+        Route::post('/shipping',[ShippingController::class,'adminStore'])->name('shipping.adminStore');
+        Route::get('/shipping/{id}',[ShippingController::class,'adminEdit'])->name('shipping.adminEdit');
+        Route::put('/shipping/{id}',[ShippingController::class,'adminUpdate'])->name('shipping.adminUpdate');
+        Route::delete('/shipping/{id}',[ShippingController::class,'adminDelete'])->name('shipping.adminDelete');
 
 
 

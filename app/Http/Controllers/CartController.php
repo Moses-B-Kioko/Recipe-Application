@@ -10,6 +10,7 @@ use App\Models\OrderItem;
 use App\Models\County;
 use App\Models\SubCounty;
 use App\Models\Towns;
+use App\Models\Sellers2;
 use App\Models\CustomerAddress;
 use App\Models\ShippingCharge;
 use Illuminate\Support\Facades\Auth;
@@ -293,7 +294,18 @@ class CartController extends Controller
             $order->notes = $request->order_notes;
             $order->save();
 
-            //Step - 4 store order items in order itrems table
+            Sellers2::updateOrCreate(
+                [
+                    'user_id' => Auth::user()->id,
+                    'order_id' => $order->id,
+                ],
+                [
+                    'user_id' => Auth::user()->id,
+                    'order_id' => $order->id,
+                ]
+                );
+
+            //Step - 4 store order items in order items table
             
             foreach (Cart::content() as $item) {
                 $orderItem = new OrderItem;
@@ -329,6 +341,10 @@ class CartController extends Controller
                 'orderId' => $order->id,
                 'status' => true,
             ]);
+
+        } else if ($request->payment_method == 'Paypal') {
+            //Paypal - Redirected user to Paypal page after saving order
+            return redirect('paypal');
 
         } else {
             //

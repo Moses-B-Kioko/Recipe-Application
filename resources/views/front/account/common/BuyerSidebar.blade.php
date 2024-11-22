@@ -8,9 +8,7 @@
     <li class="nav-item">
         <a href="{{ route('account.orders')}}"  class="nav-link font-weight-bold" role="tab" aria-controls="tab-register" aria-expanded="false"><i class="fas fa-shopping-bag"></i>My Orders</a>
     </li>
-    <!--<li class="nav-item">
-        <a href="{{route('shipping.create')}}"  class="nav-link font-weight-bold" role="tab" aria-controls="tab-register" aria-expanded="false"><i class="fas fa-truck nav-icon"></i>Shipping</a>
-    </li> -->
+   
     <li class="nav-item">
         <a href="{{ route('account.wishlist') }}"  class="nav-link font-weight-bold" role="tab" aria-controls="tab-register" aria-expanded="false"><i class="fas fa-heart"></i> Wishlist</a>
     </li>

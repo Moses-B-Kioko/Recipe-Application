@@ -70,7 +70,7 @@
                                         @foreach($orders as $order)
                                             <tr>
                                                 <td><a href="{{ route('orders.detail',[$order->id, 1])}}">{{ $order->id }}</a></td>
-                                                <td>{{ $order->name }}</td>
+                                                <td>{{ $order->user->name }}</td>
                                                 <td>{{ $order->email }}</td>
                                                 <td>{{ $order->mobile }}</td>
                                                 <td class="text-center">
@@ -86,6 +86,7 @@
                                                 </td>
                                                 <td>{{ number_format($order->grand_total,2)}}</td>
                                                 <td>{{\Carbon\Carbon::parse($order->created_at)->format('d,M,Y')}}</td>
+                                               
                                             </tr>
                                         @endforeach
                                     @else

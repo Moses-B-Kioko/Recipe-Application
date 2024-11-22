@@ -5,11 +5,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Sellers1;
+use App\Models\Sellers2;
+use Illuminate\Support\Facades\Auth;
+
 
 class OrderController extends Controller
 {
     public function index(Request $request) {
-        $orders = Order::latest('orders.created_at')->select('orders.*','users.name','users.email');
+        $orders = Order::where('user_id',Auth::user()->id)->with('orders')->latest('orders.created_at')->select('orders.*','users.name','users.email');
         $orders = $orders->leftJoin('users','users.id','orders.user_id');
 
         if ($request->get('keyword')) {
@@ -18,11 +22,16 @@ class OrderController extends Controller
             $orders = $orders->orWhere('orders.id','like','%'.$request->keyword.'%');
         }
 
-        $orders = $orders->paginate(10);
+        $orders = Order::where('user_id', Auth::user()->id)
+        ->paginate(10);
 
-        return view('front.orders.list',[
+        $data = [];
+    $data['orders'] = $orders;
+    return view('front.orders.list',$data);
+
+        /*return view('front.orders.list',[
             'orders' => $orders
-        ]);
+        ]); */
     }
 
     public function adminIndex(Request $request) {

@@ -12,6 +12,7 @@ use App\Models\Seller;
 use App\Models\BookImage;
 use App\Models\TempImage;
 use App\Models\BookRating;
+use App\Models\Sellers1;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
@@ -23,25 +24,35 @@ class BookController extends Controller
 {
     public function index(Request $request)
 {
-    // Retrieve the seller ID of the currently authenticated user
+    /* Retrieve the seller ID of the currently authenticated user
     $sellerId = auth('seller')->id();
 
     // Initialize the query, filtering books by seller ID and eager loading book images
-    $books = Book::where('seller_id', $sellerId)->latest('id')->with('book_images');
+    $books = Book::where('seller_id', $sellerId)->latest('id')->with('book_images');*/
+
+    $sellers1 = Sellers1::where('user_id',Auth::user()->id)->with('book')->get();
+
 
     // Filter by keyword if a search term is provided
     if ($request->get('keyword') != "") {
-        $books = $books->where('title', 'like', '%'.$request->keyword.'%');
+        $sellers1 = $sellers1->where('title', 'like', '%'.$request->keyword.'%');
     }
 
     // Paginate the results
-    $books = $books->paginate();
+    $sellers1 = Sellers1::where('user_id', Auth::user()->id)
+    ->with('book')
+    ->paginate(10); // You can specify the number of items per page
 
-    // Prepare data for the view
+
+    $data = [];
+    $data['sellers1'] = $sellers1;
+    return view('front.books.list',$data);
+
+    /*Prepare data for the view
     $data['books'] = $books;
 
     // Return the view with the books data
-    return view('front.books.list', $data);
+    return view('front.books.list', $data); */
 }
 
     
@@ -68,9 +79,15 @@ class BookController extends Controller
     }
 
     public function store(Request $request) {
-        
-        //dd($request->image_array);
-        //exit();
+        if (!Auth::check()) {
+            session(['url.intended' => url()->previous()]);
+    
+            return response()->json([
+                'status' => false
+            ]);
+        }
+    
+        // Validation rules
         $rules = [
             'title' => 'required',
             'slug' => 'required',
@@ -82,43 +99,53 @@ class BookController extends Controller
             'is_featured' => 'required|in:Yes,No',
             'condition' => 'required|in:Perfect,Good,Okay,Not That Okay,Bad',
         ];
-
-        if (!empty($request->track_qty) && $request->track_qty == 'Yes') {
+    
+        if ($request->track_qty == 'Yes') {
             $rules['qty'] = 'required|numeric';
-        } else {
+        }
+    
+        $validator = Validator::make($request->all(), $rules);
+    
+        if ($validator->fails()) {
             return response()->json([
                 'status' => false,
                 'errors' => $validator->errors()
             ]);
         }
+    
+        // Create a new book entry
+        $book = new Book;
+        $book->title = $request->title;
+        $book->slug = $request->slug;
+        $book->author = $request->author;
+        $book->description = $request->description;
+        $book->price = $request->price;
+        $book->track_qty = $request->track_qty;
+        $book->qty = $request->qty;
+        $book->category_id = $request->category;
+        $book->sub_genre_id = $request->sub_category;
+        $book->is_featured = $request->is_featured;
+        $book->condition = $request->condition;
+        $book->user_id = Auth::user()->id; // Set the seller ID
+        $book->save();
 
-        $validator = Validator::make($request->all(), $rules);
-
-        if ($validator->passes()) {
-            $book = new Book;
-            $book->title = $request->title;
-            $book->slug = $request->slug;
-            $book->author = $request->author;
-            $book->description = $request->description;
-            $book->price = $request->price;
-            $book->compare_price = $request->compare_price;
-            $book->track_qty = $request->track_qty;
-            $book->qty = $request->qty;
-            $book->status = $request->status;
-            $book->category_id = $request->category; 
-            $book->sub_genre_id = $request->sub_category;
-            $book->is_featured = $request->is_featured;
-            $book->Condition = $request->condition;
-            $book->shipping_returns = $request->shipping_returns;
-            $book->short_description = $request->short_description;
-            $book->related_books = (!empty($request->related_books)) ? implode(',',$request->related_books) : '';
-            //$book->seller_id = auth()->guard('seller')->id();
-            //$book->seller_id = auth()->id(); 
-            // In your store method
-            //$book->seller_id = $request->input('seller_id'); 
-            $book->seller_id = auth('seller')->id();
-            $book->save();
-
+        Sellers1::updateOrCreate(
+            [
+                'user_id' => Auth::user()->id,
+                'book_id' => $book->id,
+            ],
+            [
+                'user_id' => Auth::user()->id,
+                'book_id' => $book->id,
+            ]
+            );
+    
+        /* Now save the book_id in the Sellers1 table
+        $seller = new Sellers1;
+        $seller->user_id = Auth::user()->id;
+        $seller->book_id = $book->id; // Use the book ID just created
+        $seller->save(); */
+    
 
             //Save Gallery Pics
             if (!empty($request->image_array)) {
@@ -168,12 +195,12 @@ class BookController extends Controller
             ]);
 
             
-        } else {
+        
             return response()->json([
                 'status' => false,
                 'errors' => $validator->errors()
             ]);
-        }
+        
     }
 
     public function edit ($id, Request $request) 
@@ -208,9 +235,9 @@ class BookController extends Controller
         return view('front.books.edit', $data);
     }
 
-    public function update ($id, Request $request) {
+    public function update($id, Request $request) {
         $book = Book::find($id);
-
+    
         $rules = [
             'title' => 'required',
             'slug' => 'required',
@@ -222,55 +249,47 @@ class BookController extends Controller
             'is_featured' => 'required|in:Yes,No',
             'condition' => 'required|in:Perfect,Good,Okay,Not That Okay,Bad',
         ];
-
+    
         if (!empty($request->track_qty) && $request->track_qty == 'Yes') {
             $rules['qty'] = 'required|numeric';
-        } else {
-            return response()->json([
-                'status' => false,
-                'errors' => $validator->errors()
-            ]);
         }
-
+    
         $validator = Validator::make($request->all(), $rules);
-
-        if ($validator->passes()) {
-
-            $book->title = $request->title;
-            $book->slug = $request->slug;
-            $book->author = $request->author;
-            $book->description = $request->description;
-            $book->price = $request->price;
-            $book->compare_price = $request->compare_price;
-            $book->track_qty = $request->track_qty;
-            $book->qty = $request->qty;
-            $book->status = $request->status;
-            $book->category_id = $request->category; 
-            $book->sub_genre_id = $request->sub_category;
-            $book->is_featured = $request->is_featured;
-            $book->Condition = $request->condition;
-            $book->shipping_returns = $request->shipping_returns;
-            $book->short_description = $request->short_description;
-            $book->related_books = (!empty($request->related_books)) ? implode(',',$request->related_books) : '';
-           
-            $book->save();
-
-            //Save Gallery Pics
-            $request->session()->flash('success', 'Book updated successfully');
-
-            return response()->json([
-                'status' => true,
-                'message' => 'Book updated successfully'
-            ]);
-
-            
-        } else {
+    
+        if ($validator->fails()) {
             return response()->json([
                 'status' => false,
                 'errors' => $validator->errors()
             ]);
         }
+    
+        $book->title = $request->title;
+        $book->slug = $request->slug;
+        $book->author = $request->author;
+        $book->description = $request->description;
+        $book->price = $request->price;
+        $book->compare_price = $request->compare_price;
+        $book->track_qty = $request->track_qty;
+        $book->qty = $request->qty;
+        $book->status = $request->status;
+        $book->category_id = $request->category; 
+        $book->sub_genre_id = $request->sub_category;
+        $book->is_featured = $request->is_featured;
+        $book->Condition = $request->condition;
+        $book->shipping_returns = $request->shipping_returns;
+        $book->short_description = $request->short_description;
+        $book->related_books = (!empty($request->related_books)) ? implode(',', $request->related_books) : '';
+    
+        $book->save();
+    
+        $request->session()->flash('success', 'Book updated successfully');
+    
+        return response()->json([
+            'status' => true,
+            'message' => 'Book updated successfully'
+        ]);
     }
+    
 
     public function destroy($id, Request $request) {
         $book = Book::find($id);

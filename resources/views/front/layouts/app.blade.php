@@ -88,7 +88,11 @@
                 <a href="{{ route('front.cart')}}" class="ml-3 d-flex pt-2">
                     <i class="fas fa-shopping-cart text-primary"></i>
                 </a>
-                <a href="{{ route('account.register')}}" class="btn btn-warning" style="background-color: yellow; color: black; margin-left: 30px;">Sell</a>
+                @if (Auth::check())
+                <a href="{{ route('account.sellerProfile') }}" class="btn btn-warning" style="background-color: yellow; color: black; margin-left: 30px;">Sell</a>
+            @else
+                <a href="{{ route('account.register') }}" class="btn btn-warning" style="background-color: yellow; color: black; margin-left: 30px;">Sell</a>
+            @endif
             </div>
         </nav>
     </div>
@@ -250,6 +254,8 @@ function addToCart(id) {
             }
         });
     }
+
+   
 </script>
 @yield('scripts')
 </body>

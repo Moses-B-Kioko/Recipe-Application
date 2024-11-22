@@ -81,12 +81,12 @@
                                                         <label for="description">Description</label>
                                                         <textarea name="description" id="description" cols="30" rows="10" class="summernote" placeholder="Description">{{ $book->description}}</textarea>
                                                     </div>
-                                                </div><div class="col-md-12">
+                                                <!--</div><div class="col-md-12">
                                                     <div class="mb-3">
                                                         <label for="description">Shipping and Returns</label>
                                                         <textarea name="shipping_returns" id="shipping_returns" cols="30" rows="10" class="summernote" placeholder="Shipping and Returns">{{ $book->shipping_returns}}</textarea>
                                                     </div>
-                                                </div>
+                                                </div>-->
                                                 
                                                 <!-- Product Status Section -->
                                                 <div class="col-md-12">

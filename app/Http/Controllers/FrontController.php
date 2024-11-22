@@ -121,4 +121,8 @@ class FrontController extends Controller
             'message' => '<div class="alert-success"><strong>"'.$book->title.'"</strong> added in your wishlist </div>'
         ]);
     }
+
+    public function addBookToSellerAccount(Request $request) {
+
+    }
 }

@@ -1,7 +1,7 @@
-@extends('front.layouts.app')
+@extends('admin.layouts.app')
 
 @section('content')
-<section class="section-5 pt-3 pb-3 mb-3 bg-white">
+<!--<section class="section-5 pt-3 pb-3 mb-3 bg-white">
     <div class="container">
         <div class="light-font">
             <ol class="breadcrumb primary-color mb-0">
@@ -10,17 +10,17 @@
             </ol>
         </div>
     </div>
-</section>
+</section> -->
 
-<section class="section-11">
-    <div class="container mt-5">
+<section class="section-11" style="min-height: 100vh;">
+    <div class="container-fluid mt-12">
         <div class="row">
             <!-- Sidebar Column -->
-            <div class="col-md-3">
-                @include('front.account.common.sidebar') <!-- Include the sidebar here -->
-            </div>
+            <!--<div class="col-md-3">
+                @include('front.account.common.sidebar')  Include the sidebar here
+            </div>-->
             <!-- Main Content Column -->
-            <div class="col-md-9">
+            <div class="col-12">
                 <!-- Create Product Section -->
                 <section class="content-header">
                     <div class="container-fluid my-2">
@@ -29,7 +29,7 @@
                                 <h1>Shipping Management</h1>
                             </div>
                             <div class="col-sm-2 text-right">
-                                <a href="{{ route('books.index')}}" class="btn btn-primary">Back</a>
+                                <a href="{{ route('shipping.adminCreate')}}" class="btn btn-primary">Back</a>
                             </div>
                         </div>
                     </div>
@@ -41,8 +41,9 @@
                 @csrf   
                 <div class="container-fluid">
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-12">
                                     <!-- Main Product Creation Form -->
+                                    <div class="card w-100 h-100">
                                     <div class="card mb-3">
                                         <div class="card-body">								
                                             <div class="row">
@@ -94,7 +95,7 @@
 
                                                         <td>Ksh.{{$shippingCharge->amount}}</td>
                                                         <td>
-                                                            <a href="{{ route('shipping.edit',$shippingCharge->id )}}" class="btn btn-primary">Edit</a>
+                                                            <a href="{{ route('shipping.adminEdit',$shippingCharge->id )}}" class="btn btn-primary">Edit</a>
                                                             <a href="javascript:void(0);" onclick="deleteRecord({{$shippingCharge->id}});" class="btn btn-danger">Delete</a>
                                                         </td>
                                                         </tr>
@@ -112,7 +113,7 @@
 </section>
 @endsection
 
-@section('scripts')
+@section('customJs')
         
 
         <script>
@@ -122,14 +123,14 @@ $("#shippingForm").submit(function(event){
     $("button[type=submit]").prop('disabled', true);
 
     $.ajax({
-        url: '{{ route("shipping.store")}}',
+        url: '{{ route("shipping.adminStore")}}',
         type: 'post',
         data: element.serializeArray(),
         dataType: 'json',
         success: function(response){
             $("button[type=submit]").prop('disabled', false);
             if(response["status"] == true){
-                window.location.href="{{ route('shipping.create')}}";
+                window.location.href="{{ route('shipping.adminCreate')}}";
                 
             } else {
                 var errors = response['errors'];
@@ -318,7 +319,7 @@ function deleteImage(id) {
 }
 
 function deleteRecord(id){
-		var url = '{{ route("shipping.delete", "ID") }}';
+		var url = '{{ route("shipping.adminDelete", "ID") }}';
 		var newUrl = url.replace("ID", id)
 		
 		if (confirm("Are you sure you want to delete")){
@@ -332,7 +333,7 @@ function deleteRecord(id){
 				},
 				success: function(response) {
 					if(response["status"]){
-						window.location.href="{{ route('shipping.create')}}"
+						window.location.href="{{ route('shipping.adminCreate')}}"
 					}
 				}
 		});

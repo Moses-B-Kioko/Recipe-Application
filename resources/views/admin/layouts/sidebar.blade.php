@@ -43,6 +43,12 @@
 									<p>Books</p>
 								</a>
 							</li>
+							<li class="nav-item">
+								<a href="{{route('shipping.adminCreate')}}" class="nav-link">
+									<i class="fas fa-truck nav-icon"></i>
+									<p>Shipping</p>
+								</a>
+							</li>
 
 							<li class="nav-item">
 								<a href="{{ route('books.bookRatings')}}" class="nav-link">

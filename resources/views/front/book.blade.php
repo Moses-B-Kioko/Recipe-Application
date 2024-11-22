@@ -116,7 +116,8 @@
                                {!! $book->description !!}
                             </div>
                             <div class="tab-pane fade" id="shipping" role="tabpanel" aria-labelledby="shipping-tab">
-                                {!! $book->shipping_returns !!}
+                                <!--{!! $book->shipping_returns !!}-->
+                                Books will be delivered through uber packages 
                         </div>
                         <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
                             <div class="col-md-8">

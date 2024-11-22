@@ -10,6 +10,8 @@ use App\Models\County;
 use App\Models\SubCounty;
 use App\Models\towns;
 use App\Models\Seller;
+use App\Models\Sellers1;
+use App\Models\Sellers2;
 use App\Models\Wishlist;
 use App\Models\CustomerAddress;
 use Illuminate\Support\Facades\Hash;
@@ -460,6 +462,10 @@ class AuthController extends Controller
         return view('front.account.forgot-password');
     }
 
+    public function adminforgetPassword() { 
+        return view('admin.account.forgot-password');
+    }
+
     public function processForgotPassword(Request $request) {
         $validator = Validator::make($request->all(),[
             'email' => 'required|email|exists:users,email'
@@ -562,4 +568,51 @@ class AuthController extends Controller
             ]);
         }
     }
+
+    public function sellerAccount() {
+        $sellers = Sellers1::where('user_id',Auth::user()->id)->with('book')->get();
+        $data = [];
+        $data['sellers1'] = $sellers1;
+        return view('front.books.list',$data);
+    }
+
+    public function seller2Account() {
+        $sellers = Sellers2::where('user_id',Auth::user()->id)->with('orders')->get();
+        $data = [];
+        $data['sellers2'] = $sellers2;
+        return view('front.orders.list',$data);
+    }
+
+    public function sellerOrders() {
+        $user = Auth::user();
+
+        $orders = Order::where('user_id',$user->id)->orderBy('created_at','DESC')->get();
+
+        $orders = Order::paginate(10);
+
+        $data['orders'] = $orders;
+
+        return view('front.orders.list',$data);
+    }
+
+    public function pay(Request $request) {
+        try{
+            
+            $paypal_amount = round(Session::get('grand_total')/130, 2);
+            $response = $this->gateway->purchase(array(
+                'amount' => $paypal_amount,
+                'currency' => env('PAYPAL_CURRENCY'),
+                'returnUrl' => url('success'),
+                'cancelUrl' => url('error')
+            ))->send();
+            if ($response->isRedirect()) {
+                $response->redirect();
+            } else {
+                return $response->getMessage();
+            }
+        } catch(\Throwable $th) {
+            return $th->getMessage();
+        }
+    }
+
 }
