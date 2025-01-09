@@ -140,6 +140,9 @@ class CartController extends Controller
     
 
     public function checkout() {
+        if (auth()->check() && auth()->user()->role === '1') {
+            return redirect()->route('front.home')->with('error', 'Sellers cannot access the checkout page.');
+        }
         // If cart is empty redirect to cart page
         if (Cart::count() == 0) {
             return redirect()->route('front.cart');

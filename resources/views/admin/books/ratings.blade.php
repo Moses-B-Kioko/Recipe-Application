@@ -1,25 +1,12 @@
 @extends('admin.layouts.app')
 
 @section('content')
-<!--<section class="section-5 pt-3 pb-3 mb-3 bg-white">
-    <div class="container">
-        <div class="light-font">
-            <ol class="breadcrumb primary-color mb-0">
-                <li class="breadcrumb-item"><a class="white-text" href="#">My Account</a></li>
-                <li class="breadcrumb-item">Settings</li>
-            </ol>
-        </div>
-    </div>
-</section>-->
+
 
 <section class="section-11">
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar Column 
-            <div class="col-md-3 pt-3 pb-3 mb-3">
-                @include('front.account.common.sidebar') 
-            </div> -->
-
+          
             <!-- Main Content Column -->
             <div class="col-md-12">
                 <!-- Content Header -->
@@ -134,20 +121,21 @@
 		} 
 	}
 
-    function changeStatus(status, id) {
-        if (confirm("Are you sure you want to change status")){
-			$.ajax({
-				url: '{{ route("books.changeRatingStatus") }}',
-				type: 'get',
-				data: {status:status, id:id},
-				dataType: 'json',
-				success: function(response) {
-						window.location.href="{{ route('books.bookRatings')}}";
-					
-				}
-		});
-		} 
+    function changeStatus(currentStatus, id) {
+    var newStatus = currentStatus == 1 ? 0 : 1;
+    if (confirm("Are you sure you want to change status?")) {
+        $.ajax({
+            url: '{{ route("books.changeRatingStatus") }}',
+            type: 'get',
+            data: { status: newStatus, id: id },
+            dataType: 'json',
+            success: function(response) {
+                window.location.href = "{{ route('books.bookRatings') }}";
+            }
+        });
     }
+}
+
 
 </script>
 @endsection

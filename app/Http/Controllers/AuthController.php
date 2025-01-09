@@ -583,16 +583,20 @@ class AuthController extends Controller
         return view('front.orders.list',$data);
     }
 
-    public function sellerOrders() {
+    public function sellerOrders(Request $request) {
         $user = Auth::user();
 
-        $orders = Order::where('user_id',$user->id)->orderBy('created_at','DESC')->get();
+        $orders = Order::where('user_id', $user->id)
+                   ->when($request->keyword, function ($query) use ($request) {
+                       $query->where('id', 'like', '%' . $request->keyword . '%')
+                             ->orWhere('email', 'like', '%' . $request->keyword . '%')
+                             ->orWhere('mobile', 'like', '%' . $request->keyword . '%');
+                   })
+                   ->paginate(10); // Adjust pagination as needed
 
-        $orders = Order::paginate(10);
+        //$data['orders'] = $orders;
 
-        $data['orders'] = $orders;
-
-        return view('front.orders.list',$data);
+        return view('front.orders.list', compact('orders'));
     }
 
     public function pay(Request $request) {

@@ -1,4 +1,4 @@
-@extends('front.layouts.app')
+@extends('front.layouts.app1')
 
 @section('content')
 <section class="section-5 pt-3 pb-3 mb-3 bg-white">
@@ -15,6 +15,9 @@
 
     <section class="section-9 pt-4">
         <div class="container">
+        @if (auth()->check() && auth()->user()->role === 'seller')
+    <div class="alert alert-danger">Sellers are not allowed to place orders.</div>
+@else
             <form id="orderForm" name="orderForm" action="" method="post">
             
             <div class="row">
@@ -146,27 +149,28 @@
                     </div>                    
                     <div class="card cart-summery">
                         <div class="card-body">
-
                             @foreach (Cart::content() as $item )
                             <div class="d-flex justify-content-between pb-2">
-                                <div class="h6">{{ $item->name}} X {{ $item->qty}}</div>
-                                <div class="h6">Ksh.{{$item->price*$item->qty}}</div>
-                            </div>
-                            @endforeach
-                            
-                            
-                            <div class="d-flex justify-content-between summery-end">
-                                <div class="h6"><strong>Subtotal</strong></div>
-                                <div class="h6"><strong> Ksh.{{Cart::subtotal()}}</strong></div>
-                            </div>
-                            <div class="d-flex justify-content-between mt-2">
-                                <div class="h6"><strong>Shipping</strong></div>
-                                <div class="h6"><strong id="shippingAmount">Ksh.{{ number_format($totalShippingCharge, 2)}}</strong></div>
-                            </div>
-                            <div class="d-flex justify-content-between mt-2 summery-end">
-                                <div class="h5"><strong>Total</strong></div>
-                                <div class="h5"><strong id="grandTotal">Ksh.{{number_format($grandTotal,2)}}</strong></div>
-                            </div>                            
+    <div class="h6">{{ $item->name }} X {{ $item->qty }}</div>
+    <div class="h6">Ksh.{{ number_format($item->price * $item->qty, 2) }}</div>
+</div>
+@endforeach
+
+
+<div class="d-flex justify-content-between summery-end">
+    <div class="h6"><strong>Subtotal</strong></div>
+    <div class="h6"><strong>Ksh.{{ number_format(Cart::subtotal(), 2) }}</strong></div>
+</div>
+
+<div class="d-flex justify-content-between mt-2">
+    <div class="h6"><strong>Shipping</strong></div>
+    <div class="h6"><strong id="shippingAmount">Ksh.{{ number_format($totalShippingCharge, 2) }}</strong></div>
+</div>
+
+<div class="d-flex justify-content-between mt-2 summery-end">
+    <div class="h5"><strong>Total</strong></div>
+    <div class="h5"><strong id="grandTotal">Ksh.{{ number_format($grandTotal, 2) }}</strong></div>
+</div>                           
                         </div>
                     </div>   
                     
@@ -178,15 +182,23 @@
                         <label for="payment_method_one" class="form-check-label">Cash on Delivery</label>
                     </div>
 
-                    <div class="">
-                        <input type="radio" name="payment_method" value="cod" id="payment_method_two">
-                        <label for="payment_method_two" class="form-check-label">Stripe</label>
-                    </div>
+                    
 
-                    <div class="">
-                        <input type="radio" name="payment_method" value="cod" id="payment_method_three">
-                        <label for="payment_method_three" class="form-check-label">Mpesa</label>
+                    <div>
+                    <input type="radio" name="payment_method" value="mpesa" id="payment_method_mpesa">
+                    <label for="payment_method_mpesa" class="form-check-label">Mpesa</label>
+                </div>
+
+                <div id="mpesa-payment-form" class="d-none">
+                    <div class="mb-3">
+                        <label for="mobile" class="mb-2">Mobile Number</label>
+                        <input type="text" name="mobile_mpesa" id="mobile_mpesa" class="form-control" placeholder="254712345678">
                     </div>
+                    <div class="pt-4">
+                        <button type="button" id="payWithMpesa" class="btn-dark btn btn-block w-100">Pay with Mpesa</button>
+                    </div>
+                </div>
+
 
                         <div class="card-body p-0 d-none mt-3" id="card-payment-form">
                             <div class="mb-3">
@@ -217,6 +229,7 @@
                 </div>
             </div>
             </form>
+          @endif  
         </div>
     </section>
 @endsection
@@ -228,6 +241,32 @@
             $("#card-payment-form").addClass('d-none');
         }
     });
+
+    $("#payment_method_mpesa").click(function () {
+    $("#mpesa-payment-form").removeClass('d-none');
+    });
+
+    $("#payWithMpesa").click(function () {
+        const mobile = $("#mobile_mpesa").val();
+        const amount = "{{ number_format($grandTotal, 2) }}";
+
+        $.ajax({
+            url: "{{ route('checkout.mpesa') }}",
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                mobile: mobile,
+                amount: amount,
+            },
+            success: function (response) {
+                alert("STK Push sent. Please complete payment on your phone.");
+            },
+            error: function (error) {
+                alert("Error initiating STK Push. Try again.");
+            },
+        });
+    });
+
 
     $("#payment_method_two").click(function(){
         if ($(this).is(":checked") == true) {

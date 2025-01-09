@@ -1,24 +1,12 @@
 @extends('admin.layouts.app')
 
 @section('content')
-<!--<section class="section-5 pt-3 pb-3 mb-3 bg-white">
-    <div class="container">
-        <div class="light-font">
-            <ol class="breadcrumb primary-color mb-0">
-                <li class="breadcrumb-item"><a class="white-text" href="#">My Account</a></li>
-                <li class="breadcrumb-item">Settings</li>
-            </ol>
-        </div>
-    </div>
-</section> -->
+
 
 <section class="section-11" style="min-height: 100vh;">
     <div class="container-fluid mt-12">
         <div class="row">
-            <!-- Sidebar Column -->
-            <!--<div class="col-md-3">
-                @include('front.account.common.sidebar')  Include the sidebar here
-            </div>-->
+            
             <!-- Main Content Column -->
             <div class="col-12">
                 <!-- Create Product Section -->

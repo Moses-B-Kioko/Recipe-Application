@@ -31,4 +31,11 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'mpesa' => [
+        'consumer_key' => env('DazGAAljSIQIVV1FePeRry1oBdjiEAAao6TAYZHjZhAKUdso'),
+        'consumer_secret' => env('1xoYZkggRDkREZWnCuhMIErisSDVwIBudY6c0qE1DzgfEB8jq5kFhXBxAPeR5yAA'),
+        'short_code' => env('174379'),
+        'pass_key' => env('MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjQxMTIyMTgzMzIy'),
+    ],
+
 ];

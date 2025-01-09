@@ -17,6 +17,7 @@ use App\Http\Controllers\ShippingController;
 use App\Http\Controllers\BookImageController; 
 use App\Http\Controllers\BookSubGenreController; 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MpesaController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController; 
@@ -62,7 +63,7 @@ Route::get('/cart',[CartController::class,'cart'])->name('front.cart');
 Route::post('/add-to-cart',[CartController::class,'addToCart'])->name('front.addToCart');
 Route::post('/update-cart',[CartController::class,'updateCart'])->name('front.updateCart');
 Route::post('/delete-item',[CartController::class,'deleteItem'])->name('front.deleteItem.cart');
-Route::get('/checkout',[CartController::class,'checkout'])->name('front.checkout');
+Route::get('/checkout',[CartController::class,'checkout'])->name('front.checkout')->middleware('notSeller');
 Route::post('/process-checkout',[CartController::class,'processCheckout'])->name('front.processCheckout');
 Route::get('/thanks/{orderId}',[CartController::class,'thankyou'])->name('front.thankyou');
 Route::post('/get-order-summery',[CartController::class,'getOrderSummery'])->name('front.getOrderSummery');
@@ -127,6 +128,12 @@ Route::group(['prefix' => 'account'], function () {
        Route::post('/paypal/pay', [PaypalController::class, 'pay'])->name('paypal.pay');
        Route::post('/success', [PaypalController::class, 'success'])->name('paypal.success');
        Route::post('/error', [PaypalController::class, 'error'])->name('paypal.error');
+
+       //Mpesa
+    Route::post('/checkout/mpesa', [MpesaController::class, 'stkPush'])->name('checkout.mpesa');
+    Route::get('/checkout/mpesa/callback', [MpesaController::class, 'callback'])->name('checkout.mpesa.callback');
+
+
        
        /*Route::get('/success','PaypalController@success');
         Route::get('/error','PaypalController@error');*/
@@ -250,6 +257,8 @@ Route::group(['prefix' => 'admin'], function () {
         //Admin Orders Routes
         Route::get('/admin-orders',[OrderController::class,'adminIndex'])->name('orders.adminIndex');
         Route::get('/admin-orders/{id}',[OrderController::class,'adminDetail'])->name('orders.adminDetail');
+        Route::post('/admin-order/admin-change-status/{id}',[OrderController::class,'adminChangeOrderStatusForm'])->name('orders.adminChangeOrderStatusForm');
+Route::post('/admin-order/admin-send-email/{id}',[OrderController::class,'adminSendInvoiceEmail'])->name('orders.adminSendInvoiceEmail');
 
         //Admin Book Routes
         Route::get('/admin-books',[BookController::class,'adminIndex'])->name('books.adminIndex');

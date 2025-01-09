@@ -21,10 +21,7 @@
         <!-- Default box -->
         <div class="container-fluid h-100"> <!-- Added h-100 to fill height -->
             <div class="row h-100"> <!-- Added h-100 to fill height -->
-                <!-- Sidebar on the Left 
-                <div class="col-md-3">
-                    @include('front.account.common.sidebar')
-                </div>-->
+                
 
                 <!-- Main Content on the Right -->
                 <div class="col-md-12 col-lg-13 h-100"> <!-- Changed to col-lg-11 for a wider content area -->

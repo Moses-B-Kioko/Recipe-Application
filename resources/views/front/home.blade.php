@@ -107,12 +107,12 @@
                 @foreach (getGenres() as $category )
                 <div class="col-lg-3">
                     <div class="cat-card">
-                        <div class="left">
+                        <!--<div class="left">
                             @if ($category->image != "")
                             <img src="{{ asset('/uploads/category/thumb/'.$category->image) }}" alt="" class="img-fluid">
                             @endif
-                            <!--<img src="{{ asset('front-assets/images/cat-1.jpg')}}" alt="" class="img-fluid"> -->
-                        </div>
+                            <img src="{{ asset('front-assets/images/cat-1.jpg')}}" alt="" class="img-fluid">
+                        </div>-->
                         <div class="right">
                             <div class="cat-data">
                                 <h2>{{$category->name}}</h2>

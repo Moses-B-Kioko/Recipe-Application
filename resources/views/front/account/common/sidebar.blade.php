@@ -9,10 +9,10 @@
         <a href="{{ route('account.sellerOrders')}}"  class="nav-link font-weight-bold" role="tab" aria-controls="tab-register" aria-expanded="false"><i class="fas fa-shopping-bag"></i>My Orders</a>
     </li>
    
-    <li class="nav-item">
+    <!--<li class="nav-item">
         <a href="/message"  class="nav-link font-weight-bold" role="tab" aria-controls="tab-register" aria-expanded="false"><i class="fas fa-envelope"></i>
         Message</a>
-    </li>
+    </li>-->
     <li class="nav-item">
         <a href="{{route('account.sellerShowChangePasswordForm')}}"  class="nav-link font-weight-bold" role="tab" aria-controls="tab-register" aria-expanded="false"><i class="fas fa-lock"></i> Change Password</a>
     </li>

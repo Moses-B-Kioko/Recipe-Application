@@ -101,9 +101,9 @@
                                                 <!-- Product Category Section -->
                                                 <div class="col-md-12">
                                                     <div class="mb-3">
-                                                        <label for="category">Book Genre</label>
+                                                        <label for="category">Book Category</label>
                                                         <select name="category" id="category" class="form-control">
-                                                            <option value="">Select a Genre</option>
+                                                            <option value="">Select a Category</option>
                                                            @if ($categories->isNotEmpty())
                                                                 @foreach ($categories as $category)
                                                                 <option {{ ($book->category_id == $category->id) ? 'selected' : '' }} value="{{$category->id}}">{{$category->name}}</option>
@@ -113,9 +113,9 @@
                                                         <p class="error"></p>
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label for="sub_category">Sub Genre</label>
+                                                        <label for="sub_category">Sub Category</label>
                                                         <select name="sub_category" id="sub_category" class="form-control">
-                                                        <option value="">Select a Sub Genre</option>
+                                                        <option value="">Select a Sub Category</option>
                                                         @if ($subGenres->isNotEmpty())
                                                                 @foreach ($subGenres as $subGenre)
                                                                 <option {{ ($book->sub_genre_id == $subGenre->id) ? 'selected' : '' }} value="{{$subGenre->id}}">{{$subGenre->name}}</option>

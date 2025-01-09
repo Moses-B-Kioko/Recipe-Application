@@ -25,16 +25,6 @@
     <link rel="shortcut icon" type="image/x-icon" href="#" />
 </head>
 <body data-instant-intensity="mousedown">
-    <!-- Display error messages if any -->
-@if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
 
 <div class="bg-light top-header">        
     <div class="container">
@@ -113,11 +103,7 @@
                 <a href="{{ route('front.cart')}}" class="ml-3 d-flex pt-2">
                     <i class="fas fa-shopping-cart text-primary"></i>
                 </a>
-                @if (Auth::check())
-                <a href="{{ route('account.sellerProfile') }}" class="btn btn-warning" style="background-color: yellow; color: black; margin-left: 30px;">Sell</a>
-            @else
-                <a href="{{ route('account.register') }}" class="btn btn-warning" style="background-color: yellow; color: black; margin-left: 30px;">Sell</a>
-            @endif
+                
             </div>
         </nav>
     </div>

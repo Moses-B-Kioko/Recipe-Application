@@ -100,7 +100,19 @@ class DashboardController extends Controller
         //
     }
 
+     // Get revenue by county (total grand_total by county)
+     $revenueByCounty = Order::join('county', 'orders.county_id', '=', 'county.id')
+     ->select('county.name as county_name', DB::raw('SUM(orders.grand_total) as total_revenue'))
+     ->groupBy('county.id', 'county.name')
+     ->orderByDesc('total_revenue')
+     ->get();
 
-        return view('admin.dashboard', compact('labels', 'values', 'bookLabels', 'bookValues', 'categoryLabels', 'categoryValues', 'countyLabels', 'countyValues','totalSales','totalOrders','bestCategory','totalUsers'));
+    // Prepare labels and data for the chart
+    $countyLabels = $revenueByCounty->pluck('county_name');
+    $countyRevenue = $revenueByCounty->pluck('total_revenue');
+
+
+
+        return view('admin.dashboard', compact('labels', 'values', 'bookLabels', 'bookValues', 'categoryLabels', 'categoryValues', 'countyLabels', 'countyValues', 'countyRevenue','totalSales','totalOrders','bestCategory','totalUsers'));
     }
 }

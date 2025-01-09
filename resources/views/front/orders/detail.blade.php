@@ -95,7 +95,7 @@
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card">
+                <!--<div class="card">
                     <form action="" method="post" name="changeOrderStatusForm" id="changeOrderStatusForm">
                         <div class="card-body">
                             <h2 class="h4 mb-3">Order Status</h2>
@@ -116,7 +116,7 @@
                             </div>
                         </div>
                     </form>
-                </div>
+                </div>-->
                 <div class="card">
                     <div class="card-body">
                         <form action="" method="post" name="sendInvoiceEmail" id="sendInvoiceEmail">

@@ -4,12 +4,13 @@
 <h1 style="text-align: center;">Dashboard</h1>
 
 <div class="container-fluid">
-     <!-- Export Buttons -->
-     <div class="export-buttons mb-3" style="text-align: center;">
+    <!-- Export Buttons -->
+    <div class="export-buttons mb-3" style="text-align: center;">
         <button id="exportCSV" class="btn btn-secondary" style="margin-right: 5px;">Export CSV</button>
         <button id="exportExcel" class="btn btn-success" style="margin-right: 5px;">Export Excel</button>
         <button id="downloadPDF" class="btn btn-primary" style="margin-right: 5px;">Download PDF</button>
     </div>
+
     <div class="row mb-4">
         <!-- Total Sales Card -->
         <div class="col-md-3">
@@ -34,7 +35,7 @@
             <div class="card" style="background-color: #f8f9fa; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); transition: box-shadow 0.3s;">
                 <div class="card-body">
                     <h5 class="card-title">Best Selling Category:</h5>
-                     <p class="card-text">{{ $bestCategory->name }}</p> <!--Display only the category name -->
+                    <p class="card-text">{{ $bestCategory->name }}</p>
                 </div>
             </div>
         </div>
@@ -54,8 +55,6 @@
         <span class="visually-hidden">Loading...</span>
     </div>
 
-   
-
     <h3 style="text-align: center;">Charts</h3>
 
     <div style="display: flex; justify-content: space-between; flex-wrap: wrap; margin-bottom: 20px;">
@@ -71,12 +70,11 @@
         <div style="flex: 1; margin-right: 10px;">
             <canvas id="salesByCategory" width="400" height="200"></canvas>
         </div>
-        <div style="flex: 1; margin-left: 10px;">
-            <canvas id="shippingCostsChart" width="400" height="200"></canvas>
+        <div>
+            <canvas id="revenueByCountyChart" width="400" height="200"></canvas>
         </div>
     </div>
 </div>
-
 
 @endsection
 
@@ -87,8 +85,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js"></script>
 
 <script>
-    // Chart Initialization
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
+        // Chart data
         const salesOverTimeLabels = @json($labels);
         const salesOverTimeData = @json($values);
         const bookLabels = @json($bookLabels);
@@ -96,11 +94,11 @@
         const categoryLabels = @json($categoryLabels);
         const categoryValues = @json($categoryValues);
         const countyLabels = @json($countyLabels);
-        const countyValues = @json($countyValues);
+        const countyRevenue = @json($countyRevenue);
 
         // Sales Over Time Chart
-        const ctx = document.getElementById('salesOverTime').getContext('2d');
-        const salesOverTimeChart = new Chart(ctx, {
+        const ctx1 = document.getElementById('salesOverTime').getContext('2d');
+        const salesOverTimeChart = new Chart(ctx1, {
             type: 'line',
             data: {
                 labels: salesOverTimeLabels,
@@ -117,16 +115,10 @@
                 scales: {
                     y: {
                         beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Total Sales (Grand Total)',
-                        },
+                        title: { display: true, text: 'Total Sales (Grand Total)' }
                     },
                     x: {
-                        title: {
-                            display: true,
-                            text: 'Date',
-                        },
+                        title: { display: true, text: 'Date' }
                     }
                 }
             }
@@ -150,10 +142,7 @@
                 scales: {
                     y: {
                         beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Total Books Sold',
-                        },
+                        title: { display: true, text: 'Total Books Sold' }
                     }
                 }
             }
@@ -177,269 +166,162 @@
                 scales: {
                     y: {
                         beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Total Sales',
-                        },
+                        title: { display: true, text: 'Total Sales' }
                     }
                 }
             }
         });
 
-        // Shipping Costs Chart
-        const ctxShipping = document.getElementById('shippingCostsChart').getContext('2d');
-        const shippingCostsChart = new Chart(ctxShipping, {
+        // Revenue by County Chart
+        const ctx4 = document.getElementById('revenueByCountyChart').getContext('2d');
+        const revenueByCountyChart = new Chart(ctx4, {
             type: 'bar',
             data: {
                 labels: countyLabels,
                 datasets: [{
-                    label: 'Average Shipping Cost by County',
-                    data: countyValues,
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
+                    label: 'Total Revenue by County',
+                    data: countyRevenue,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1
                 }]
             },
             options: {
                 scales: {
                     y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Average Shipping Cost (Amount)',
-                        },
-                    },
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'County',
-                        }
+                        beginAtZero: true
                     }
                 }
             }
         });
 
-        /* Export CSV Logic
+        // Export CSV Logic
         document.getElementById('exportCSV').addEventListener('click', function () {
-            const headers = ['Label', 'Value'];
-            const csvData = salesOverTimeLabels.map((label, index) => [label, salesOverTimeData[index]]);
-            const csvContent = convertToCSV(csvData, headers);
+            const csvData = generateCombinedCSVData();
+            exportCSV(csvData, 'dashboard_data.csv');
+        });
+
+        function generateCombinedCSVData() {
+            const combinedData = [];
+            const headers = [
+                'Sales Over Time - Date', 'Sales Over Time - Total Sales',
+                'Top Selling Books - Book Title', 'Top Selling Books - Quantity Sold',
+                'Sales By Category - Category', 'Sales By Category - Total Sales',
+                'Shipping Costs - County', 'Shipping Costs - Average Shipping Cost'
+            ];
+            combinedData.push(headers);
+
+            const maxLength = Math.max(
+                salesOverTimeLabels.length,
+                bookLabels.length,
+                categoryLabels.length,
+                countyLabels.length
+            );
+
+            for (let i = 0; i < maxLength; i++) {
+                const row = [];
+                row.push(salesOverTimeLabels[i] || '', salesOverTimeData[i] || '');
+                row.push(bookLabels[i] || '', bookValues[i] || '');
+                row.push(categoryLabels[i] || '', categoryValues[i] || '');
+                row.push(countyLabels[i] || '', countyRevenue[i] || '');
+                combinedData.push(row);
+            }
+
+            return combinedData;
+        }
+
+        function exportCSV(data, filename) {
+            let csvContent = '';
+            data.forEach(row => {
+                csvContent += row.join(',') + '\n';
+            });
+
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'sales_data.csv';
-            a.click();
-            URL.revokeObjectURL(url);
-        }); */
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+        }
 
-        // Export Excel Logic
-        // Event listener for the Export CSV button
-document.getElementById('exportCSV').addEventListener('click', function () {
-    const csvData = generateCombinedCSVData();
-    exportCSV(csvData, 'dashboard_data.csv');
-});
+        // Excel Export Logic
+        document.getElementById('exportExcel').addEventListener('click', function () {
+            const combinedData = generateCombinedExcelData();
+            exportExcel(combinedData, 'dashboard_data.xlsx');
+        });
 
-// Function to Generate Combined CSV Data
-function generateCombinedCSVData() {
-    // Create an array to hold the combined data
-    const combinedData = [];
+        function generateCombinedExcelData() {
+            const combinedData = [];
+            const headers = [
+                'Sales Over Time - Date', 'Sales Over Time - Total Sales',
+                'Top Selling Books - Book Title', 'Top Selling Books - Quantity Sold',
+                'Sales By Category - Category', 'Sales By Category - Total Sales',
+                'Shipping Costs - County', 'Shipping Costs - Average Shipping Cost'
+            ];
+            combinedData.push(headers);
 
-    // Prepare headers
-    const headers = [
-        'Sales Over Time - Date', 'Sales Over Time - Total Sales',
-        'Top Selling Books - Book Title', 'Top Selling Books - Quantity Sold',
-        'Sales By Category - Category', 'Sales By Category - Total Sales',
-        'Shipping Costs - County', 'Shipping Costs - Average Shipping Cost'
-    ];
+            const maxLength = Math.max(
+                salesOverTimeLabels.length,
+                bookLabels.length,
+                categoryLabels.length,
+                countyLabels.length
+            );
 
-    // Push headers to the combined data
-    combinedData.push(headers);
+            for (let i = 0; i < maxLength; i++) {
+                const row = [];
+                row.push(salesOverTimeLabels[i] || '', salesOverTimeData[i] || '');
+                row.push(bookLabels[i] || '', bookValues[i] || '');
+                row.push(categoryLabels[i] || '', categoryValues[i] || '');
+                row.push(countyLabels[i] || '', countyRevenue[i] || '');
+                combinedData.push(row);
+            }
 
-    // Find the maximum length of the data arrays to iterate through
-    const maxLength = Math.max(
-        salesOverTimeLabels.length,
-        bookLabels.length,
-        categoryLabels.length,
-        countyLabels.length
-    );
+            return combinedData;
+        }
 
-    // Fill combined data row by row
-    for (let i = 0; i < maxLength; i++) {
-        const row = [];
+        function exportExcel(data, filename) {
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Dashboard Data');
+            XLSX.writeFile(wb, filename);
+        }
 
-        // Sales Over Time Data
-        row.push(salesOverTimeLabels[i] || '', salesOverTimeData[i] || '');
-
-        // Top Selling Books Data
-        row.push(bookLabels[i] || '', bookValues[i] || '');
-
-        // Sales By Category Data
-        row.push(categoryLabels[i] || '', categoryValues[i] || '');
-
-        // Shipping Costs Data
-        row.push(countyLabels[i] || '', countyValues[i] || '');
-
-        combinedData.push(row);
-    }
-
-    return combinedData;
-}
-
-// Function to export data to CSV
-function exportCSV(data, filename) {
-    const csvContent = data.map(row => row.join(',')).join('\n'); // Convert data to CSV format
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename; // Set the filename for download
-    document.body.appendChild(a); // Append to the body
-    a.click(); // Programmatically click the link to trigger the download
-    document.body.removeChild(a); // Remove the link after download
-    URL.revokeObjectURL(url); // Revoke the object URL
-}
-
-
-
-        // Export Excel Logic
-       /* document.getElementById('exportExcel').addEventListener('click', function () {
-            const excelData = salesOverTimeLabels.map((label, index) => ({
-                Date: label,
-                'Total Sales': salesOverTimeData[index]
-            }));
-            exportToExcel(excelData, 'sales_data.xlsx');
-        }); */
-        // Export Excel Logic
-       // Export Excel Logic
-document.getElementById('exportExcel').addEventListener('click', function () {
-    const excelData = generateCombinedExcelData();
-    exportToExcel(excelData, 'dashboard_data.xlsx');
-});
-
-// Function to Generate Combined Excel Data
-function generateCombinedExcelData() {
-    // Create an array to hold the combined data
-    const combinedData = [];
-
-    // Prepare headers
-    const headers = [
-        'Sales Over Time - Date', 
-        'Sales Over Time - Total Sales',
-        'Top Selling Books - Book Title', 
-        'Top Selling Books - Quantity Sold',
-        'Sales By Category - Category', 
-        'Sales By Category - Total Sales',
-        'Shipping Costs - County', 
-        'Shipping Costs - Average Shipping Cost'
-    ];
-
-    // Push headers to the combined data
-    combinedData.push(headers);
-
-    // Find the maximum length of the data arrays to iterate through
-    const maxLength = Math.max(
-        salesOverTimeLabels.length,
-        bookLabels.length,
-        categoryLabels.length,
-        countyLabels.length
-    );
-
-    // Fill combined data row by row
-    for (let i = 0; i < maxLength; i++) {
-        const row = [];
-
-        // Sales Over Time Data
-        row.push(salesOverTimeLabels[i] || '', salesOverTimeData[i] || '');
-
-        // Top Selling Books Data
-        row.push(bookLabels[i] || '', bookValues[i] || '');
-
-        // Sales By Category Data
-        row.push(categoryLabels[i] || '', categoryValues[i] || '');
-
-        // Shipping Costs Data
-        row.push(countyLabels[i] || '', countyValues[i] || '');
-
-        combinedData.push(row);
-    }
-
-    // Return combined data for Excel export
-    return combinedData; // Include headers and data
-}
-
-// Export to Excel Function
-function exportToExcel(data, filename) {
-    // Create a new workbook
-    const workbook = XLSX.utils.book_new();
-
-    // Convert the data into a worksheet
-    const worksheet = XLSX.utils.aoa_to_sheet(data);
-    
-    // Append the worksheet to the workbook
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Combined Data');
-
-    // Save the workbook
-    XLSX.writeFile(workbook, filename);
-}
-
-
-        // Download PDF Logic
+        // Generate PDF Function
         document.getElementById('downloadPDF').addEventListener('click', function () {
             generatePDF();
         });
+
+        function generatePDF() {
+            // Initialize jsPDF
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('portrait', 'pt', 'a4'); // A4 page size in points (595 x 842)
+
+            // Capture each chart using html2canvas and add to PDF
+            const charts = ['salesOverTime', 'topSellingBooks', 'salesByCategory', 'revenueByCountyChart'];
+
+            let yPosition = 20; // Initial Y position for the first chart
+
+            // Using Promise.all to ensure all charts are captured and processed
+            Promise.all(
+                charts.map((chartId, index) => {
+                    return html2canvas(document.getElementById(chartId)).then(canvas => {
+                        const imgData = canvas.toDataURL('image/png');
+                        const imgWidth = 400;  // Chart width in the PDF (adjust if needed)
+                        const imgHeight = canvas.height * imgWidth / canvas.width;  // Maintain aspect ratio
+                        
+                        if (index > 0) {
+                            doc.addPage();  // Add new page after the first chart
+                        }
+                        doc.addImage(imgData, 'PNG', 10, yPosition, imgWidth, imgHeight);
+                        yPosition += imgHeight + 20; // Adjust position for next chart
+                    });
+                })
+            ).then(() => {
+                // Save the generated PDF
+                doc.save('dashboard_data.pdf');
+            });
+        }
     });
 
-    /* CSV Conversion Function
-    function convertToCSV(data, headers) {
-        const csvRows = [headers.join(',')];
-        data.forEach(row => csvRows.push(row.join(',')));
-        return csvRows.join('\n');
-    } */
 
-    /* Export to Excel Function
-    function exportToExcel(data, filename) {
-        const worksheet = XLSX.utils.json_to_sheet(data);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-        XLSX.writeFile(workbook, filename);
-    } */
-
-    // Generate PDF Function
-    function generatePDF() {
-        // Initialize jsPDF
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF('portrait', 'pt', 'a4'); // A4 page size in points (595 x 842)
-
-        // Capture each chart using html2canvas and add to PDF
-        const charts = ['salesOverTime', 'topSellingBooks', 'salesByCategory', 'shippingCostsChart'];
-
-        let yPosition = 20; // Initial Y position for the first chart
-
-        // Using Promise.all to ensure all charts are captured and processed
-        Promise.all(
-            charts.map((chartId, index) => {
-                return html2canvas(document.getElementById(chartId)).then(canvas => {
-                    const imgData = canvas.toDataURL('image/png');
-                    const imgWidth = 400;  // Chart width in the PDF (adjust if needed)
-                    const imgHeight = canvas.height * imgWidth / canvas.width;  // Maintain aspect ratio
-                    
-                    if (yPosition + imgHeight > 800) { 
-                        // If the next chart would overflow the page, create a new page
-                        doc.addPage();
-                        yPosition = 20; // Reset y position for the new page
-                    }
-
-                    // Add image to the PDF at the current position
-                    doc.addImage(imgData, 'PNG', 40, yPosition, imgWidth, imgHeight);
-                    
-                    yPosition += imgHeight + 20; // Update Y position for the next chart, adding a margin
-                });
-            })
-        ).then(() => {
-            // Save the PDF after all charts are added
-            doc.save('dashboard_reports.pdf');
-        });
-    }
 </script>
 @endsection
